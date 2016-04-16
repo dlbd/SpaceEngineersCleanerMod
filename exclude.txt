@@ -1,0 +1,6 @@
+\exclude.txt
+\.git\
+\.gitignore
+\.vs\
+\bin\
+\obj\

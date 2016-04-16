@@ -1,12 +1,10 @@
-﻿using Sandbox.ModAPI;
-
-namespace SpaceEngineersCleanerMod
+﻿namespace SpaceEngineersCleanerMod
 {
 	public class PlayerSpammer : RepeatedAction
 	{
 		private int timesNotified;
 
-		public PlayerSpammer(ITimerFactory timerFactory) : base(timerFactory, 1000/*10 * 60 * 1000*/)
+		public PlayerSpammer(ITimerFactory timerFactory, double interval) : base(timerFactory, interval)
 		{
 		}
 

@@ -41,9 +41,9 @@ namespace SpaceEngineersCleanerMod
 			{
 				services = new object[]
 				{
-					//new PlayerSpammer(timerFactory),
-					new TrashRemover(timerFactory),
-					new FloatingObjectRemover(timerFactory),
+					//new PlayerSpammer(timerFactory, 10 * 1000),
+					new TrashRemover(timerFactory, 10 * 1000, 100), // change later: should run about every 10 minutes
+					new FloatingObjectRemover(timerFactory, 10 * 1000, 100), // change later: should run about every 5 minutes
 				};
 			}
 

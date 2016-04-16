@@ -1,85 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-using Sandbox.ModAPI;
-using VRage.ModAPI;
 using VRage.Game.ModAPI;
-using VRageMath;
 
 namespace SpaceEngineersCleanerMod
 {
+	public class TrashRemovalContext : RemovalContext
+	{
+		public List<IMySlimBlock> CurrentEntitySlimBlocks = new List<IMySlimBlock>();
+	}
+
 	/// <summary>
 	/// Deleter of cubegrids that have few blocks and no owners.
 	/// </summary>
-	public class TrashRemover : RepeatedAction
+	public class TrashRemover : RepeatedRemover<IMyCubeGrid, TrashRemovalContext>
 	{
 		private const int BlockCountThreshold = 50;
-		private const int PlayerDistanceThreshold = 500;
-
-		public TrashRemover(ITimerFactory timerFactory) : base(timerFactory, 10 * 1000) // should run like every 10 minutes
+	
+		public TrashRemover(ITimerFactory timerFactory, double interval, double playerDistanceTreshold) : base(timerFactory, interval, playerDistanceTreshold, new TrashRemovalContext())
 		{
 		}
 
-		public override void Run()
+		protected override void PrepareRemovalContext(TrashRemovalContext context)
 		{
-			var entities = new HashSet<IMyEntity>();
-			MyAPIGateway.Entities.GetEntities(entities, e => e is IMyCubeGrid);
+			base.PrepareRemovalContext(context);
 
-			var players = new List<IMyPlayer>();
-			MyAPIGateway.Players.GetPlayers(players, p => p != null);
+			context.CurrentEntitySlimBlocks = new List<IMySlimBlock>();
+		}
 
-			var playerPositions = new List<Vector3D>();
-			foreach (var player in players)
-				playerPositions.Add(player.GetPosition());
+		protected override bool ShouldDeleteEntity(IMyCubeGrid entity, TrashRemovalContext context)
+		{
+			if (entity.SmallOwners.Count > 0)
+				return false;
 
-			var slimBlocks = new List<IMySlimBlock>();
-			var entitiesToDelete = new List<IMyEntity>();
+			context.CurrentEntitySlimBlocks.Clear();
+			entity.GetBlocks(context.CurrentEntitySlimBlocks);
 
-			foreach (var entity in entities)
-			{
-				var cubeGrid = entity as IMyCubeGrid;
+			if (context.CurrentEntitySlimBlocks.Count > BlockCountThreshold)
+				return false;
 
-				if (cubeGrid.SmallOwners.Count > 0)
-					continue;
+			return true;
+		}
 
-				slimBlocks.Clear();
-				cubeGrid.GetBlocks(slimBlocks);
-
-				if (slimBlocks.Count > BlockCountThreshold)
-					continue;
-
-				if (Utilities.AnyWithinDistance(cubeGrid.GetPosition(), playerPositions, PlayerDistanceThreshold))
-					continue;
-
-				entitiesToDelete.Add(entity);
-			}
-
-			if (entitiesToDelete.Count == 0)
-				return;
-
-			var syncObjectWasNull = false;
-			var deletedEntityNames = new List<string>();
-
-			foreach (var entity in entitiesToDelete)
-			{
-				if (entity.SyncObject == null)
-				{
-					syncObjectWasNull = true;
-					entity.Delete();
-				}
-				else
-				{
-					entity.SyncObject.SendCloseRequest();
-				}
-
-				deletedEntityNames.Add(entity.DisplayName);
-			}
-
+		protected override void AfterRemoval(RemovalContext context)
+		{
 			Utilities.ShowMessageFromServer("Removed {0} grid(s) that had fewer than {1} blocks, no owner and no players within {2} m: {3}.",
-				entitiesToDelete.Count, BlockCountThreshold, PlayerDistanceThreshold, string.Join(", ", deletedEntityNames));
-
-			if (syncObjectWasNull)
-				Utilities.ShowMessageFromServer("Also, SyncObject = null on at least one grid.");
+				context.EntitiesForRemoval.Count, BlockCountThreshold, PlayerDistanceThreshold, string.Join(", ", context.EntitiesForRemovalNames));
 		}
 	}
 }
