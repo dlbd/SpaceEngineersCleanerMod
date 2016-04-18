@@ -67,6 +67,7 @@ namespace SpaceEngineersCleanerMod
 			}
 			catch (Exception ex)
 			{
+				Logger.WriteLine("Exception in RepeatedDeleter.Run(): {0}", ex);
 				Utilities.ShowMessageFromServer("Oh no, there was an error while I was deleting stuff, let's hope nothing broke: " + ex.Message);
 			}
 		}

@@ -64,7 +64,7 @@ namespace SpaceEngineersCleanerMod
 			var gridNamesWithOwners = context.EntitiesForDeletion
 				.Select(entity => string.Format("{0} (owned by {1}", entity.DisplayName, GetOwnerNameString(entity, context.Players)));
 
-			Utilities.ShowMessageFromServer("Deleted {0} respawn ship(s) that had no owner online and no players within {1} m: {3}.",
+			Utilities.ShowMessageFromServer("Deleted {0} respawn ship(s) that had no owner online and no players within {1} m: {2}.",
 				context.EntitiesForDeletion.Count, PlayerDistanceThreshold, string.Join(", ", gridNamesWithOwners));
 		}
 
