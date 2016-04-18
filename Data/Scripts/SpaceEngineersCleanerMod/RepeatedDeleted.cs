@@ -1,32 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Sandbox.ModAPI;
-using VRage.ModAPI;
-using VRage.Game.ModAPI;
-using VRageMath;
 
 namespace SpaceEngineersCleanerMod
 {
-	public class RemovalContext
-	{
-		public HashSet<IMyEntity> Entities = new HashSet<IMyEntity>();
-		public List<IMyPlayer> Players = new List<IMyPlayer>();
-		public List<Vector3D> PlayerPositions = new List<Vector3D>();
-
-		public List<IMyEntity> EntitiesForRemoval = new List<IMyEntity>();
-		public List<string> EntitiesForRemovalNames = new List<string>();
-	}
-
-	public abstract class RepeatedRemover<TEntity, TRemovalContext> : RepeatedAction
+	public abstract class RepeatedDeleter<TEntity, TDeletionContext> : RepeatedAction
 		where TEntity : class
-		where TRemovalContext : RemovalContext
+		where TDeletionContext : DeletionContext
 	{
-		private readonly TRemovalContext context;
+		private readonly TDeletionContext context;
 
-		public RepeatedRemover(ITimerFactory timerFactory, double interval, double playerDistanceTreshold, TRemovalContext initialRemovalContext) : base(timerFactory, interval)
+		public RepeatedDeleter(double interval, double playerDistanceTreshold, TDeletionContext initialDeletionContext) : base(interval)
 		{
-			context = initialRemovalContext;
+			context = initialDeletionContext;
 			PlayerDistanceThreshold = playerDistanceTreshold;
 		}
 
@@ -34,7 +20,7 @@ namespace SpaceEngineersCleanerMod
 		{
 			try
 			{
-				PrepareRemovalContext(context);
+				PrepareDeletionContext(context);
 
 				foreach (var untypedEntity in context.Entities)
 				{
@@ -58,26 +44,26 @@ namespace SpaceEngineersCleanerMod
 					if (PlayerDistanceThreshold > 0 && Utilities.AnyWithinDistance(untypedEntity.GetPosition(), context.PlayerPositions, PlayerDistanceThreshold))
 						continue;
 
-					if (!ShouldDeleteEntity(entity, context))
+					if (!BeforeDelete(entity, context))
 						continue;
 
-					context.EntitiesForRemoval.Add(untypedEntity);
+					context.EntitiesForDeletion.Add(untypedEntity);
 				}
 
-				if (context.EntitiesForRemoval.Count == 0)
+				if (context.EntitiesForDeletion.Count == 0)
 					return;
 
-				foreach (var entity in context.EntitiesForRemoval)
+				foreach (var entity in context.EntitiesForDeletion)
 				{
 					if (entity.SyncObject == null)
 						entity.Delete();
 					else
 						entity.SyncObject.SendCloseRequest();
 
-					context.EntitiesForRemovalNames.Add(entity.DisplayName);
+					context.EntitiesForDeletionNames.Add(entity.DisplayName);
 				}
 
-				AfterRemoval(context);
+				AfterDeletion(context);
 			}
 			catch (Exception ex)
 			{
@@ -85,7 +71,7 @@ namespace SpaceEngineersCleanerMod
 			}
 		}
 
-		protected virtual void PrepareRemovalContext(TRemovalContext context)
+		protected virtual void PrepareDeletionContext(TDeletionContext context)
 		{
 			context.Entities.Clear();
 			MyAPIGateway.Entities.GetEntities(context.Entities, entity => entity is TEntity);
@@ -101,16 +87,16 @@ namespace SpaceEngineersCleanerMod
 					context.PlayerPositions.Add(player.GetPosition());
 			}
 
-			context.EntitiesForRemoval.Clear();
-			context.EntitiesForRemovalNames.Clear();
+			context.EntitiesForDeletion.Clear();
+			context.EntitiesForDeletionNames.Clear();
 		}
 
-		protected virtual bool ShouldDeleteEntity(TEntity entity, TRemovalContext context)
+		protected virtual bool BeforeDelete(TEntity entity, TDeletionContext context)
 		{
 			return true;
 		}
 
-		protected virtual void AfterRemoval(RemovalContext context)
+		protected virtual void AfterDeletion(DeletionContext context)
 		{
 		}
 

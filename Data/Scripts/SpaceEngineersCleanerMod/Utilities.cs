@@ -9,17 +9,22 @@ namespace SpaceEngineersCleanerMod
 {
 	public static class Utilities
 	{
+		public const string ServerName = "Server";
+
 		public static bool IsGameRunning()
 		{
 			return
 				MyAPIGateway.Entities != null &&
 				MyAPIGateway.Multiplayer != null &&
 				MyAPIGateway.Players != null &&
+				MyAPIGateway.Session != null &&
 				MyAPIGateway.Utilities != null;
 		}
 
 		public static void ShowMessageFromServer(string text)
 		{
+			Logger.WriteLine("{0}: {1}", ServerName, text);
+
 			if (!MyAPIGateway.Multiplayer.MultiplayerActive)
 			{
 				ShowMessageFromServerOnClient(text);
@@ -43,7 +48,7 @@ namespace SpaceEngineersCleanerMod
 
 		public static void ShowMessageFromServerOnClient(string text)
 		{
-			MyAPIGateway.Utilities.ShowMessage("Server", text);
+			MyAPIGateway.Utilities.ShowMessage(ServerName, text);
 		}
 
 		public static bool AnyWithinDistance(Vector3D position, List<Vector3D> otherPositions, double threshold)
@@ -53,6 +58,20 @@ namespace SpaceEngineersCleanerMod
 					return true;
 
 			return false;
+		}
+
+		public static bool IsConnectableToOtherGrids(IMySlimBlock slimBlock)
+		{
+			var fatBlock = slimBlock.FatBlock;
+
+			if (fatBlock == null)
+				return false;
+
+			return
+				fatBlock is IMyMotorBase ||
+				fatBlock is IMyMotorRotor ||
+				fatBlock is IMyPistonBase ||
+				fatBlock is IMyPistonTop;
 		}
 	}
 }

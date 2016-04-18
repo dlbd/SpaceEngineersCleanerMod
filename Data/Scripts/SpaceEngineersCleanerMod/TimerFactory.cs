@@ -3,21 +3,23 @@ using System.Timers;
 
 namespace SpaceEngineersCleanerMod
 {
-	public class TimerFactory : ITimerFactory
+	public static class TimerFactory
 	{
-		private readonly List<Timer> timers = new List<Timer>();
+		private static readonly List<Timer> timers = new List<Timer>();
 
-		public Timer CreateTimer()
+		public static Timer CreateTimer()
 		{
 			var timer = new Timer();
 			timers.Add(timer);
 			return timer;
 		}
 
-		public void CloseAllTimers()
+		public static void CloseAllTimers()
 		{
 			foreach (var timer in timers)
 				timer.Close();
+
+			timers.Clear();
 		}
 	}
 }

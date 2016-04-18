@@ -91,15 +91,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FloatingObjectRemover.cs" />
+    <Compile Include="NewCubeGridAnnouncer.cs" />
+    <Compile Include="FloatingObjectDeleter.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="MessageIds.cs" />
-    <Compile Include="ITimerFactory.cs" />
     <Compile Include="MainLogic.cs" />
     <Compile Include="PlayerSpammer.cs" />
-    <Compile Include="RepeatedRemover.cs" />
+    <Compile Include="DeletionContexts.cs" />
+    <Compile Include="RepeatedDeleted.cs" />
     <Compile Include="RepeatedAction.cs" />
+    <Compile Include="RespawnShipDeleter.cs" />
     <Compile Include="TimerFactory.cs" />
-    <Compile Include="TrashRemover.cs" />
+    <Compile Include="TrashDeleter.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -19,7 +19,20 @@ namespace SpaceEngineersCleanerMod
 	[MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation)]
 	public class MainLogic : MySessionComponentBase
 	{
-		private TimerFactory timerFactory = new TimerFactory();
+		// TODO: configuration read from a file
+		// TODO: another kind of trash detection (owned, but few blocks, no armor, thrusters or power, and the owner is offline)
+		// TODO: separate distance thresholds for warning and deletion
+		// TODO: something that deletes shot up pirate drones
+
+		public const int FloatingObjectDeletion_Interval = 5 * 60 * 1000;
+		public const int FloatingObjectDeletion_PlayerDistanceThreshold = 100;
+
+		public const int TrashDeletion_Interval = 9 * 60 * 1000;
+		public const int TrashDeletion_PlayerDistanceThreshold = 500;
+		public const int TrashDeletion_BlockCountThreshold = 50;
+
+		public const int RespawnShipDeletion_Interval = 11 * 60 * 1000;
+		public const int RespawnShipDeletion_PlayerDistanceThreshold = 80; // not too far, so that players might see the message if they move away
 
 		private bool initialized, unloaded, registeredMessageHandler;
 		private object[] services;
@@ -28,7 +41,7 @@ namespace SpaceEngineersCleanerMod
 		{
 			base.UpdateBeforeSimulation();
 			
-			if (!initialized && Utilities.IsGameRunning())
+			if (!initialized && !unloaded && Utilities.IsGameRunning())
 			{
 				Initialize();
 				initialized = true;
@@ -39,11 +52,13 @@ namespace SpaceEngineersCleanerMod
 		{
 			if (!MyAPIGateway.Multiplayer.MultiplayerActive || MyAPIGateway.Multiplayer.IsServer)
 			{
+				Logger.Initialize();
+
 				services = new object[]
 				{
-					//new PlayerSpammer(timerFactory, 10 * 1000),
-					new TrashRemover(timerFactory, 10 * 1000, 100), // change later: should run about every 10 minutes
-					new FloatingObjectRemover(timerFactory, 10 * 1000, 100), // change later: should run about every 5 minutes
+					new FloatingObjectDeleter(FloatingObjectDeletion_Interval, FloatingObjectDeletion_PlayerDistanceThreshold),
+					new TrashDeleter(TrashDeletion_Interval, TrashDeletion_PlayerDistanceThreshold, TrashDeletion_BlockCountThreshold),
+					new RespawnShipDeleter(RespawnShipDeletion_Interval, RespawnShipDeletion_PlayerDistanceThreshold)
 				};
 			}
 
@@ -58,10 +73,12 @@ namespace SpaceEngineersCleanerMod
 		{
 			if (!unloaded)
 			{
-				timerFactory.CloseAllTimers();
+				TimerFactory.CloseAllTimers();
 
 				if (registeredMessageHandler)
 					MyAPIGateway.Multiplayer.UnregisterMessageHandler(MessageIds.MessageFromServer, ShowMessageFromServer);
+
+				Logger.Close();
 
 				unloaded = true;
 			}

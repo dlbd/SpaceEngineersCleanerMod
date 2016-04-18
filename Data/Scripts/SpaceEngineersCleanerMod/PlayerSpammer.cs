@@ -4,7 +4,7 @@
 	{
 		private int timesNotified;
 
-		public PlayerSpammer(ITimerFactory timerFactory, double interval) : base(timerFactory, interval)
+		public PlayerSpammer(double interval) : base(interval)
 		{
 		}
 

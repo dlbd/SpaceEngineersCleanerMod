@@ -1,5 +1,4 @@
-﻿using System;
-using System.Timers;
+﻿using System.Timers;
 
 using Sandbox.ModAPI;
 
@@ -9,12 +8,9 @@ namespace SpaceEngineersCleanerMod
 	{
 		private readonly Timer timer;
 
-		public RepeatedAction(ITimerFactory timerFactory, double interval)
+		public RepeatedAction(double interval)
 		{
-			if (timerFactory == null)
-				throw new ArgumentNullException("timerFactory");
-
-			timer = timerFactory.CreateTimer();
+			timer = TimerFactory.CreateTimer();
 			timer.AutoReset = true;
 			timer.Interval = interval;
 			timer.Elapsed += (sender, e) => InvokeRun();
