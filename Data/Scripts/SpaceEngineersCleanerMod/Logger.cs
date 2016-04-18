@@ -21,15 +21,15 @@ namespace SpaceEngineersCleanerMod
 			var oldContent = "";
 			var fileName = string.Format("ServerCleaner_{0}.log", Path.GetFileNameWithoutExtension(MyAPIGateway.Session.CurrentPath));
 
-			if (MyAPIGateway.Utilities.FileExistsInGlobalStorage(fileName))
+			if (MyAPIGateway.Utilities.FileExistsInLocalStorage(fileName, typeof(Logger)))
 			{
-				using (var reader = MyAPIGateway.Utilities.ReadFileInGlobalStorage(fileName))
+				using (var reader = MyAPIGateway.Utilities.ReadFileInLocalStorage(fileName, typeof(Logger)))
 				{
 					oldContent = reader.ReadToEnd();
 				}
 			}
 
-			writer = MyAPIGateway.Utilities.WriteFileInGlobalStorage(fileName);
+			writer = MyAPIGateway.Utilities.WriteFileInLocalStorage(fileName, typeof(Logger));
 			writer.Write(oldContent);
 
 			Initialized = true;
@@ -51,6 +51,7 @@ namespace SpaceEngineersCleanerMod
 				return;
 
 			writer.WriteLine("[{0}] {1}", DateTime.Now.ToString(DateTimeFormat), line);
+			writer.Flush();
 		}
 
 		public static void WriteLine(string format, params object[] args)
