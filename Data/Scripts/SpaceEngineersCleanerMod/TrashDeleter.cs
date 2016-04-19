@@ -31,7 +31,7 @@ namespace SpaceEngineersCleanerMod
 			return true;
 		}
 
-		protected override void AfterDeletion(DeletionContext context)
+		protected override void AfterDeletion(CubeGridDeletionContext context)
 		{
 			Utilities.ShowMessageFromServer("Deleted {0} grid(s) that had fewer than {1} blocks, no owner and no players within {2} m: {3}.",
 				context.EntitiesForDeletion.Count, BlockCountThreshold, PlayerDistanceThreshold, string.Join(", ", context.EntitiesForDeletionNames));

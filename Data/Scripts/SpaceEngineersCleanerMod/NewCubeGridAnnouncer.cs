@@ -13,6 +13,8 @@ namespace SpaceEngineersCleanerMod
 	[MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation)]
 	public class NewCubeGridAnnouncer : MySessionComponentBase
 	{
+		// TODO: expand this to delete cargo ships (esp. Argentavis) that enter gravity wells
+
 		public const int AnnounceEveryTicks = 500;
 
 		private bool initialized, unloaded, registeredEntityAddHandler;

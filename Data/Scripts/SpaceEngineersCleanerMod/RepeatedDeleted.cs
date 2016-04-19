@@ -97,7 +97,7 @@ namespace SpaceEngineersCleanerMod
 			return true;
 		}
 
-		protected virtual void AfterDeletion(DeletionContext context)
+		protected virtual void AfterDeletion(TDeletionContext context)
 		{
 		}
 
