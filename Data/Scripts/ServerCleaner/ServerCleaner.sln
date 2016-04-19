@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceEngineersCleanerMod", "SpaceEngineersCleanerMod.csproj", "{381112F3-C863-4250-8626-A160901A83CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerCleaner", "ServerCleaner.csproj", "{381112F3-C863-4250-8626-A160901A83CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

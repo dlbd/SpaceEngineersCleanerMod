@@ -2,7 +2,7 @@
 
 using Sandbox.ModAPI;
 
-namespace SpaceEngineersCleanerMod
+namespace ServerCleaner
 {
 	public abstract class RepeatedDeleter<TEntity, TDeletionContext> : RepeatedAction
 		where TEntity : class

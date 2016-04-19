@@ -2,7 +2,7 @@
 
 using VRage.Game.ModAPI;
 
-namespace SpaceEngineersCleanerMod
+namespace ServerCleaner
 {
 	/// <summary>
 	/// Deleter of cubegrids that have few blocks and no owners.

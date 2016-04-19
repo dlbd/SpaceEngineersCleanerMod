@@ -5,7 +5,7 @@ using Sandbox.ModAPI;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 
-namespace SpaceEngineersCleanerMod
+namespace ServerCleaner
 {
 	public class RespawnShipDeleter : RepeatedDeleter<IMyCubeGrid, RespawnShipDeleter.RespawnShipDeletionContext>
 	{

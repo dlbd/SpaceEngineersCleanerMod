@@ -5,11 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace SpaceEngineersCleanerMod
+namespace ServerCleaner
 {
 	public static class Logger
 	{
-		public const string DateTimeFormat = "yyyy-MM-dd hh:mm:ss.fff";
+		public const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
 
 		private static TextWriter writer;
 
@@ -31,6 +31,7 @@ namespace SpaceEngineersCleanerMod
 
 			writer = MyAPIGateway.Utilities.WriteFileInLocalStorage(fileName, typeof(Logger));
 			writer.Write(oldContent);
+			writer.Flush();
 
 			Initialized = true;
 		}

@@ -7,8 +7,8 @@
     <ProjectGuid>{381112F3-C863-4250-8626-A160901A83CA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SpaceEngineersCleanerMod</RootNamespace>
-    <AssemblyName>SpaceEngineersCleanerMod</AssemblyName>
+    <RootNamespace>ServerCleaner</RootNamespace>
+    <AssemblyName>ServerCleaner</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

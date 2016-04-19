@@ -4,7 +4,7 @@ using VRageMath;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 
-namespace SpaceEngineersCleanerMod
+namespace ServerCleaner
 {
 	public class DeletionContext
 	{

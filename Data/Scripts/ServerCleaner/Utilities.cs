@@ -5,7 +5,7 @@ using Sandbox.ModAPI;
 using VRage.Game.ModAPI;
 using VRageMath;
 
-namespace SpaceEngineersCleanerMod
+namespace ServerCleaner
 {
 	public static class Utilities
 	{

@@ -1,4 +1,4 @@
-﻿namespace SpaceEngineersCleanerMod
+﻿namespace ServerCleaner
 {
 	public static class MessageIds
 	{

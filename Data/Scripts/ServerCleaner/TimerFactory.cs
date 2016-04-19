@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Timers;
 
-namespace SpaceEngineersCleanerMod
+namespace ServerCleaner
 {
 	public static class TimerFactory
 	{

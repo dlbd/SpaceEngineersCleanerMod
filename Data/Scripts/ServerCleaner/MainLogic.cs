@@ -14,7 +14,7 @@ using VRage.Game;
 using VRage.Game.Components;
 using VRage.ObjectBuilders;
 
-namespace SpaceEngineersCleanerMod
+namespace ServerCleaner
 {
 	[MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation)]
 	public class MainLogic : MySessionComponentBase

@@ -2,10 +2,12 @@
 
 using Sandbox.ModAPI;
 
-namespace SpaceEngineersCleanerMod
+namespace ServerCleaner
 {
 	public abstract class RepeatedAction
 	{
+		// TODO: run on the main thread in Before/AfterSimulation. Use the timer only for elapsed checking. No InvokeRun needed that way. Where is IsTrash() called in the main code?
+
 		private readonly Timer timer;
 
 		public RepeatedAction(double interval)

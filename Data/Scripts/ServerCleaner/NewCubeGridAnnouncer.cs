@@ -8,7 +8,7 @@ using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 
-namespace SpaceEngineersCleanerMod
+namespace ServerCleaner
 {
 	[MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation)]
 	public class NewCubeGridAnnouncer : MySessionComponentBase
