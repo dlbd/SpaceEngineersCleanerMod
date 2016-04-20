@@ -91,7 +91,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NewCubeGridAnnouncer.cs" />
+    <Compile Include="NewCubeGridAnnouncerLogic.cs" />
     <Compile Include="FloatingObjectDeleter.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MessageIds.cs" />

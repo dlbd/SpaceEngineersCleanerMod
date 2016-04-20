@@ -16,7 +16,7 @@ namespace ServerCleaner
 			PlayerDistanceThreshold = playerDistanceTreshold;
 		}
 
-		public override void Run()
+		protected override void Run()
 		{
 			try
 			{
@@ -49,9 +49,6 @@ namespace ServerCleaner
 
 					context.EntitiesForDeletion.Add(untypedEntity);
 				}
-
-				if (context.EntitiesForDeletion.Count == 0)
-					return;
 
 				foreach (var entity in context.EntitiesForDeletion)
 				{

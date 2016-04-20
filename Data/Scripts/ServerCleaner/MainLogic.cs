@@ -16,7 +16,7 @@ using VRage.ObjectBuilders;
 
 namespace ServerCleaner
 {
-	[MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation)]
+	[MySessionComponentDescriptor(MyUpdateOrder.AfterSimulation)]
 	public class MainLogic : MySessionComponentBase
 	{
 		// TODO: configuration read from a file
@@ -32,20 +32,26 @@ namespace ServerCleaner
 		public const int TrashDeletion_BlockCountThreshold = 50;
 
 		public const int RespawnShipDeletion_Interval = 11 * 60 * 1000;
-		public const int RespawnShipDeletion_PlayerDistanceThreshold = 80; // not too far, so that players might see the message if they move away
+		public const int RespawnShipDeletion_PlayerDistanceThreshold = 50; // not too far, so that players might see the message if they move away
 
 		private bool initialized, unloaded, registeredMessageHandler;
-		private object[] services;
+		private RepeatedAction[] repeatedActions;
 
-		public override void UpdateBeforeSimulation()
+		public override void UpdateAfterSimulation()
 		{
-			base.UpdateBeforeSimulation();
-			
-			if (!initialized && !unloaded && Utilities.IsGameRunning())
+			base.UpdateAfterSimulation();
+
+			if (unloaded || !Utilities.IsGameRunning())
+				return;
+
+			if (!initialized)
 			{
 				Initialize();
 				initialized = true;
 			}
+
+			for (var actionIndex = 0; actionIndex < repeatedActions.Length; actionIndex++)
+				repeatedActions[actionIndex].UpdateAfterSimulation();
 		}
 
 		private void Initialize()
@@ -54,7 +60,7 @@ namespace ServerCleaner
 			{
 				Logger.Initialize();
 
-				services = new object[]
+				repeatedActions = new RepeatedAction[]
 				{
 					new FloatingObjectDeleter(FloatingObjectDeletion_Interval, FloatingObjectDeletion_PlayerDistanceThreshold),
 					new TrashDeleter(TrashDeletion_Interval, TrashDeletion_PlayerDistanceThreshold, TrashDeletion_BlockCountThreshold),
@@ -86,9 +92,9 @@ namespace ServerCleaner
 			base.UnloadData();
 		}
 
-		private void ShowMessageFromServer(byte[] bytes)
+		private void ShowMessageFromServer(byte[] encodedMessage)
 		{
-			Utilities.ShowMessageFromServerOnClient(Encoding.Unicode.GetString(bytes));
+			Utilities.ShowMessageFromServerOnClient(Encoding.Unicode.GetString(encodedMessage));
 		}
 	}
 }

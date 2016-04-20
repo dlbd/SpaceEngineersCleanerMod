@@ -6,8 +6,6 @@ namespace ServerCleaner
 {
 	public abstract class RepeatedAction
 	{
-		// TODO: run on the main thread in Before/AfterSimulation. Use the timer only for elapsed checking. No InvokeRun needed that way. Where is IsTrash() called in the main code?
-
 		private readonly Timer timer;
 
 		public RepeatedAction(double interval)
@@ -15,21 +13,21 @@ namespace ServerCleaner
 			timer = TimerFactory.CreateTimer();
 			timer.AutoReset = true;
 			timer.Interval = interval;
-			timer.Elapsed += (sender, e) => InvokeRun();
+			timer.Elapsed += (sender, e) => ShouldRun = true;
 			timer.Start();
 		}
 
-		private void InvokeRun()
+		public void UpdateAfterSimulation()
 		{
-			MyAPIGateway.Utilities.InvokeOnGameThread(() =>
-			{
-				if (!Utilities.IsGameRunning())
-					return;
+			if (!ShouldRun)
+				return;
 
-				Run();
-			});
+			ShouldRun = false;
+			Run();
 		}
 
-		public abstract void Run();
+		protected abstract void Run();
+
+		public virtual bool ShouldRun { get; private set; }
 	}
 }

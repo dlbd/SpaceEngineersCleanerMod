@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using Sandbox.ModAPI;
 using VRage.Game.ModAPI;
+using VRage.ModAPI;
 using VRageMath;
 
 namespace ServerCleaner
@@ -77,6 +79,21 @@ namespace ServerCleaner
 				fatBlock is IMyMotorRotor ||
 				fatBlock is IMyPistonBase ||
 				fatBlock is IMyPistonTop;
+		}
+
+		public static string GetOwnerNameString(IMyEntity entity, List<IMyIdentity> playerIdentities)
+		{
+			var cubeGrid = entity as IMyCubeGrid;
+			return cubeGrid == null ? "???" : GetOwnerNameString(cubeGrid.SmallOwners, playerIdentities);
+		}
+
+		public static string GetOwnerNameString(List<long> ownerIds, List<IMyIdentity> playerIdentities)
+		{
+			var result = string.Join(" & ", playerIdentities
+				.Where(identity => ownerIds.Contains(identity.PlayerId))
+				.Select(identity => identity.DisplayName));
+
+			return result.Length > 0 ? result : "noone";
 		}
 	}
 }

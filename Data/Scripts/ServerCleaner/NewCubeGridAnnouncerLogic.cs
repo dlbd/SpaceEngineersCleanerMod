@@ -11,13 +11,13 @@ using VRage.ModAPI;
 namespace ServerCleaner
 {
 	[MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation)]
-	public class NewCubeGridAnnouncer : MySessionComponentBase
+	public class NewCubeGridAnnouncerLogic : MySessionComponentBase
 	{
 		// TODO: expand this to delete cargo ships (esp. Argentavis) that enter gravity wells
 
 		public const int AnnounceEveryTicks = 500;
 
-		private bool initialized, unloaded, registeredEntityAddHandler;
+		private bool initialized, unloaded, registeredMessageHandler, registeredEntityAddHandler;
 
 		private readonly List<string> cubeGridNamesToAnnounce = new List<string>();
 		private int ticks;
@@ -47,17 +47,23 @@ namespace ServerCleaner
 
 		private void Initialize()
 		{
-			if (!MyAPIGateway.Multiplayer.MultiplayerActive || MyAPIGateway.Multiplayer.IsServer)
+			if (MyAPIGateway.Multiplayer.IsServer)
 			{
-				MyAPIGateway.Entities.OnEntityAdd += Entities_OnEntityAdd;
-				registeredEntityAddHandler = true;
+				MyAPIGateway.Multiplayer.RegisterMessageHandler(MessageIds.MessageFromServer, HandleCubeGridAddedOnClient);
+				registeredMessageHandler = true;
 			}
+
+			MyAPIGateway.Entities.OnEntityAdd += Entities_OnEntityAdd;
+			registeredEntityAddHandler = true;
 		}
 
 		protected override void UnloadData()
 		{
 			if (!unloaded)
 			{
+				if (registeredMessageHandler)
+					MyAPIGateway.Multiplayer.UnregisterMessageHandler(MessageIds.CubeGridAddedOnClient, HandleCubeGridAddedOnClient);
+
 				if (registeredEntityAddHandler)
 					MyAPIGateway.Entities.OnEntityAdd -= Entities_OnEntityAdd;
 
@@ -77,7 +83,19 @@ namespace ServerCleaner
 			if (cubeGrid.Physics == null)
 				return; // projection/block placement indicator?
 
-			cubeGridNamesToAnnounce.Add(cubeGrid.DisplayName);
+			if (!MyAPIGateway.Multiplayer.MultiplayerActive || MyAPIGateway.Multiplayer.IsServer)
+				cubeGridNamesToAnnounce.Add(cubeGrid.DisplayName);
+			else
+				MyAPIGateway.Multiplayer.SendMessageToServer(MessageIds.CubeGridAddedOnClient, Encoding.Unicode.GetBytes(cubeGrid.DisplayName));
+		}
+		
+		private void HandleCubeGridAddedOnClient(byte[] encodedName)
+		{
+			var name = Encoding.Unicode.GetString(encodedName);
+
+			Logger.WriteLine("Client reports entity addtion: {0}", encodedName);
+
+			// TODO: check logs for duplicates
 		}
 	}
 }

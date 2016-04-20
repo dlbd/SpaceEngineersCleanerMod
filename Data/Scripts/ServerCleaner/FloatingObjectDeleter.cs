@@ -10,7 +10,10 @@ namespace ServerCleaner
 
 		protected override void AfterDeletion(DeletionContext context)
 		{
-			Utilities.ShowMessageFromServer("Deleted {0} floating objects with no players within {1} m.", context.EntitiesForDeletion.Count, PlayerDistanceThreshold);
+			if (context.EntitiesForDeletion.Count == 0)
+				return;
+
+			Utilities.ShowMessageFromServer("Deleted {0} floating object(s) with no players within {1} m.", context.EntitiesForDeletion.Count, PlayerDistanceThreshold);
 		}
 	}
 }

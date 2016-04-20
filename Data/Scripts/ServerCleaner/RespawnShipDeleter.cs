@@ -3,7 +3,6 @@ using System.Linq;
 
 using Sandbox.ModAPI;
 using VRage.Game.ModAPI;
-using VRage.ModAPI;
 
 namespace ServerCleaner
 {
@@ -13,6 +12,9 @@ namespace ServerCleaner
 		{
 			public List<IMyIdentity> PlayerIdentities = new List<IMyIdentity>();
 			public List<long> OnlinePlayerIds = new List<long>();
+
+			public List<string> NameStringsForDeletion = new List<string>();
+			public List<string> NameStringsForLaterDeletion = new List<string>();
 		}
 
 		public static readonly string[] RespawnShipNames = { "Atmospheric Lander mk.1", "RespawnShip", "RespawnShip2" };
@@ -37,6 +39,9 @@ namespace ServerCleaner
 
 				context.OnlinePlayerIds.Add(player.PlayerID);
 			}
+
+			context.NameStringsForDeletion.Clear();
+			context.NameStringsForLaterDeletion.Clear();
 		}
 
 		protected override bool BeforeDelete(IMyCubeGrid entity, RespawnShipDeletionContext context)
@@ -48,6 +53,8 @@ namespace ServerCleaner
 
 			// Is the owner online?
 
+			var nameString = string.Format("{0} (owned by {1})", entity.DisplayName, Utilities.GetOwnerNameString(entity, context.PlayerIdentities));
+
 			foreach (var ownerID in entity.SmallOwners)
 			{
 				if (!context.OnlinePlayerIds.Contains(ownerID))
@@ -55,38 +62,27 @@ namespace ServerCleaner
 
 				// The owner is online, warn him
 
-				Utilities.ShowMessageFromServer("I'm going to delete {0} owned by {1} later unless it is renamed.",
-					entity.DisplayName, GetOwnerNameString(entity.SmallOwners, context.PlayerIdentities));
-
+				context.NameStringsForLaterDeletion.Add(nameString);
 				return false;
 			}
 
+			context.NameStringsForDeletion.Add(nameString);
 			return true;
 		}
 
 		protected override void AfterDeletion(RespawnShipDeletionContext context)
 		{
-			var gridNamesWithOwners = context.EntitiesForDeletion
-				.Select(entity => string.Format("{0} (owned by {1})", entity.DisplayName, GetOwnerNameString(entity, context.PlayerIdentities)));
+			if (context.EntitiesForDeletion.Count > 0)
+			{
+				Utilities.ShowMessageFromServer("Deleted {0} respawn ship(s) that had no owner online and no players within {1} m: {2}.",
+					context.EntitiesForDeletion.Count, PlayerDistanceThreshold, string.Join(", ", context.NameStringsForLaterDeletion));
+			}
 
-			Utilities.ShowMessageFromServer("Deleted {0} respawn ship(s) that had no owner online and no players within {1} m: {2}.",
-				context.EntitiesForDeletion.Count, PlayerDistanceThreshold, string.Join(", ", gridNamesWithOwners));
-		}
-
-		private static string GetOwnerNameString(IMyEntity entity, List<IMyIdentity> playerIdentities)
-		{
-			var cubeGrid = entity as IMyCubeGrid;
-			return cubeGrid == null ? "???" : GetOwnerNameString(cubeGrid.SmallOwners, playerIdentities);
-		}
-
-		private static string GetOwnerNameString(List<long> ownerIds, List<IMyIdentity> playerIdentities)
-		{
-			var result = string.Join(" & ", playerIdentities
-				.Where(identity => ownerIds.Contains(identity.PlayerId))
-				.Select(identity => identity.DisplayName));
-
-			return result.Length > 0 ? result : "noone";
+			if (context.NameStringsForLaterDeletion.Count > 0)
+			{
+				Utilities.ShowMessageFromServer("I'm going to delete the following respawn ship(s) later unless they are renamed: {0}",
+					string.Join(", ", context.NameStringsForLaterDeletion));
+			}
 		}
 	}
 }
-

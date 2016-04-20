@@ -33,6 +33,9 @@ namespace ServerCleaner
 
 		protected override void AfterDeletion(CubeGridDeletionContext context)
 		{
+			if (context.EntitiesForDeletion.Count == 0)
+				return;
+
 			Utilities.ShowMessageFromServer("Deleted {0} grid(s) that had fewer than {1} blocks, no owner and no players within {2} m: {3}.",
 				context.EntitiesForDeletion.Count, BlockCountThreshold, PlayerDistanceThreshold, string.Join(", ", context.EntitiesForDeletionNames));
 		}
