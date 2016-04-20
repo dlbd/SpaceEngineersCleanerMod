@@ -9,7 +9,8 @@ namespace ServerCleaner
 	/// </summary>
 	public class TrashDeleter : RepeatedDeleter<IMyCubeGrid, CubeGridDeletionContext>
 	{
-		public TrashDeleter(double interval, double playerDistanceTreshold, int blockCountThreshold) : base(interval, playerDistanceTreshold, new CubeGridDeletionContext())
+		public TrashDeleter(double interval, double playerDistanceThreshold, int blockCountThreshold)
+			: base(interval, new CubeGridDeletionContext() { PlayerDistanceThreshold = playerDistanceThreshold })
 		{
 			BlockCountThreshold = blockCountThreshold;
 		}
@@ -37,7 +38,7 @@ namespace ServerCleaner
 				return;
 
 			Utilities.ShowMessageFromServer("Deleted {0} grid(s) that had fewer than {1} blocks, no owner and no players within {2} m: {3}.",
-				context.EntitiesForDeletion.Count, BlockCountThreshold, PlayerDistanceThreshold, string.Join(", ", context.EntitiesForDeletionNames));
+				context.EntitiesForDeletion.Count, BlockCountThreshold, context.PlayerDistanceThreshold, string.Join(", ", context.EntitiesForDeletionNames));
 		}
 
 		public int BlockCountThreshold { get; private set; }

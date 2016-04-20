@@ -103,6 +103,7 @@
     <Compile Include="RespawnShipDeleter.cs" />
     <Compile Include="TimerFactory.cs" />
     <Compile Include="TrashDeleter.cs" />
+    <Compile Include="UnrenamedGridDeleter.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

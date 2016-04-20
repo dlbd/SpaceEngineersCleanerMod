@@ -1,26 +1,23 @@
 ﻿using System;
 
-using Sandbox.ModAPI;
-
 namespace ServerCleaner
 {
 	public abstract class RepeatedDeleter<TEntity, TDeletionContext> : RepeatedAction
 		where TEntity : class
-		where TDeletionContext : DeletionContext
+		where TDeletionContext : DeletionContext<TEntity>
 	{
-		private readonly TDeletionContext context;
+		private TDeletionContext context;
 
-		public RepeatedDeleter(double interval, double playerDistanceTreshold, TDeletionContext initialDeletionContext) : base(interval)
+		public RepeatedDeleter(double interval, TDeletionContext initialDeletionContext) : base(interval)
 		{
 			context = initialDeletionContext;
-			PlayerDistanceThreshold = playerDistanceTreshold;
 		}
 
 		protected override void Run()
 		{
 			try
 			{
-				PrepareDeletionContext(context);
+				context.Prepare();
 
 				foreach (var untypedEntity in context.Entities)
 				{
@@ -41,7 +38,7 @@ namespace ServerCleaner
 						continue;
 					}
 
-					if (PlayerDistanceThreshold > 0 && Utilities.AnyWithinDistance(untypedEntity.GetPosition(), context.PlayerPositions, PlayerDistanceThreshold))
+					if (context.PlayerDistanceThreshold > 0 && Utilities.AnyWithinDistance(untypedEntity.GetPosition(), context.PlayerPositions, context.PlayerDistanceThreshold))
 						continue;
 
 					if (!BeforeDelete(entity, context))
@@ -69,26 +66,6 @@ namespace ServerCleaner
 			}
 		}
 
-		protected virtual void PrepareDeletionContext(TDeletionContext context)
-		{
-			context.Entities.Clear();
-			MyAPIGateway.Entities.GetEntities(context.Entities, entity => entity is TEntity);
-
-			context.Players.Clear();
-			MyAPIGateway.Players.GetPlayers(context.Players, player => player != null);
-
-			if (PlayerDistanceThreshold > 0)
-			{
-				context.PlayerPositions.Clear();
-
-				foreach (var player in context.Players)
-					context.PlayerPositions.Add(player.GetPosition());
-			}
-
-			context.EntitiesForDeletion.Clear();
-			context.EntitiesForDeletionNames.Clear();
-		}
-
 		protected virtual bool BeforeDelete(TEntity entity, TDeletionContext context)
 		{
 			return true;
@@ -97,7 +74,5 @@ namespace ServerCleaner
 		protected virtual void AfterDeletion(TDeletionContext context)
 		{
 		}
-
-		public double PlayerDistanceThreshold { get; private set; }
 	}
 }

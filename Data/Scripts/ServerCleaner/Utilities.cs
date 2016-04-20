@@ -12,7 +12,7 @@ namespace ServerCleaner
 	public static class Utilities
 	{
 		public const string ServerName = "Server";
-		public const int MaxDisplayedMessageLength = 350; // the chat window can fit about 200 W characters
+		public const int MaxDisplayedMessageLength = 400; // the chat window can fit about 200 W characters
 		public const string MessageSnip = " [...]";
 
 		public static bool IsGameRunning()

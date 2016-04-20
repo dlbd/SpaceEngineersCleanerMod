@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Timers;
+﻿using System.Text;
 
-using Sandbox.Common;
-using Sandbox.Common.ObjectBuilders;
-using Sandbox.Definitions;
-using Sandbox.Engine;
-using Sandbox.Game;
 using Sandbox.ModAPI;
-using VRage.Game;
 using VRage.Game.Components;
-using VRage.ObjectBuilders;
 
 namespace ServerCleaner
 {
@@ -20,9 +9,8 @@ namespace ServerCleaner
 	public class MainLogic : MySessionComponentBase
 	{
 		// TODO: configuration read from a file
-		// TODO: another kind of trash detection (owned, but few blocks, no armor, thrusters or power, and the owner is offline)
-		// TODO: separate distance thresholds for warning and deletion
 		// TODO: something that deletes shot up pirate drones
+		// TODO: start collecting player login times for future inactive player removal
 
 		public const int FloatingObjectDeletion_Interval = 5 * 60 * 1000;
 		public const int FloatingObjectDeletion_PlayerDistanceThreshold = 100;
@@ -32,7 +20,12 @@ namespace ServerCleaner
 		public const int TrashDeletion_BlockCountThreshold = 50;
 
 		public const int RespawnShipDeletion_Interval = 11 * 60 * 1000;
-		public const int RespawnShipDeletion_PlayerDistanceThreshold = 50; // not too far, so that players might see the message if they move away
+		public const int RespawnShipDeletion_PlayerDistanceThresholdForWarning = 50;
+		public const int RespawnShipDeletion_PlayerDistanceThresholdForDeletion = 1000;
+
+		public const int UnrenamedShipDeletion_Interval = 13 * 60 * 1000;
+		public const int UnrenamedShipDeletion_PlayerDistanceThresholdForWarning = 0;
+		public const int UnrenamedShipDeletion_PlayerDistanceThresholdForDeletion = 1000;
 
 		private bool initialized, unloaded, registeredMessageHandler;
 		private RepeatedAction[] repeatedActions;
@@ -50,8 +43,11 @@ namespace ServerCleaner
 				initialized = true;
 			}
 
-			for (var actionIndex = 0; actionIndex < repeatedActions.Length; actionIndex++)
-				repeatedActions[actionIndex].UpdateAfterSimulation();
+			if (repeatedActions != null)
+			{
+				for (var actionIndex = 0; actionIndex < repeatedActions.Length; actionIndex++)
+					repeatedActions[actionIndex].UpdateAfterSimulation();
+			}
 		}
 
 		private void Initialize()
@@ -64,7 +60,8 @@ namespace ServerCleaner
 				{
 					new FloatingObjectDeleter(FloatingObjectDeletion_Interval, FloatingObjectDeletion_PlayerDistanceThreshold),
 					new TrashDeleter(TrashDeletion_Interval, TrashDeletion_PlayerDistanceThreshold, TrashDeletion_BlockCountThreshold),
-					new RespawnShipDeleter(RespawnShipDeletion_Interval, RespawnShipDeletion_PlayerDistanceThreshold)
+					new RespawnShipDeleter(RespawnShipDeletion_Interval, RespawnShipDeletion_PlayerDistanceThresholdForWarning, RespawnShipDeletion_PlayerDistanceThresholdForDeletion),
+					new UnrenamedGridDeleter(UnrenamedShipDeletion_Interval, UnrenamedShipDeletion_PlayerDistanceThresholdForWarning, UnrenamedShipDeletion_PlayerDistanceThresholdForDeletion)
 				};
 			}
 

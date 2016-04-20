@@ -5,7 +5,7 @@ namespace ServerCleaner
 {
 	public static class TimerFactory
 	{
-		private static readonly List<Timer> timers = new List<Timer>();
+		private static List<Timer> timers = new List<Timer>();
 
 		public static Timer CreateTimer()
 		{

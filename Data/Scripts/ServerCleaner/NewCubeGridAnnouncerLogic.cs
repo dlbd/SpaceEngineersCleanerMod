@@ -19,7 +19,7 @@ namespace ServerCleaner
 
 		private bool initialized, unloaded, registeredMessageHandler, registeredEntityAddHandler;
 
-		private readonly List<string> cubeGridNamesToAnnounce = new List<string>();
+		private List<string> cubeGridNamesToAnnounce = new List<string>();
 		private int ticks;
 		
 		public override void UpdateBeforeSimulation()

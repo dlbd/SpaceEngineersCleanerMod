@@ -6,7 +6,7 @@ namespace ServerCleaner
 {
 	public abstract class RepeatedAction
 	{
-		private readonly Timer timer;
+		private Timer timer;
 
 		public RepeatedAction(double interval)
 		{
