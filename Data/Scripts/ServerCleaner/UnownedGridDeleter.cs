@@ -7,9 +7,9 @@ namespace ServerCleaner
 	/// <summary>
 	/// Deleter of cubegrids that have few blocks and no owners.
 	/// </summary>
-	public class TrashDeleter : RepeatedDeleter<IMyCubeGrid, CubeGridDeletionContext>
+	public class UnownedGridDeleter : RepeatedDeleter<IMyCubeGrid, CubeGridDeletionContext>
 	{
-		public TrashDeleter(double interval, double playerDistanceThreshold, int blockCountThreshold)
+		public UnownedGridDeleter(double interval, double playerDistanceThreshold, int blockCountThreshold)
 			: base(interval, new CubeGridDeletionContext() { PlayerDistanceThreshold = playerDistanceThreshold })
 		{
 			BlockCountThreshold = blockCountThreshold;

@@ -11,7 +11,7 @@ namespace ServerCleaner
 {
 	public static class Utilities
 	{
-		public const string ServerName = "Server";
+		public const string ServerNameInChat = "Server";
 		public const int MaxDisplayedMessageLength = 400; // the chat window can fit about 200 W characters
 		public const string MessageSnip = " [...]";
 
@@ -27,7 +27,7 @@ namespace ServerCleaner
 
 		public static void ShowMessageFromServer(string text)
 		{
-			Logger.WriteLine("{0}: {1}", ServerName, text);
+			Logger.WriteLine("{0}: {1}", ServerNameInChat, text);
 
 			if (!MyAPIGateway.Multiplayer.MultiplayerActive)
 			{
@@ -55,7 +55,7 @@ namespace ServerCleaner
 			if (text.Length > MaxDisplayedMessageLength)
 				text = text.Substring(0, MaxDisplayedMessageLength - MessageSnip.Length) + MessageSnip;
 
-			MyAPIGateway.Utilities.ShowMessage(ServerName, text);
+			MyAPIGateway.Utilities.ShowMessage(ServerNameInChat, text);
 		}
 
 		public static bool AnyWithinDistance(Vector3D position, List<Vector3D> otherPositions, double threshold)

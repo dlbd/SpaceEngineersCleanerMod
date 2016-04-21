@@ -1,9 +1,7 @@
-﻿using Sandbox.ModAPI;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
+
+using Sandbox.ModAPI;
 
 namespace ServerCleaner
 {
@@ -19,7 +17,7 @@ namespace ServerCleaner
 				return;
 
 			var oldContent = "";
-			var fileName = string.Format("ServerCleaner_{0}.log", Path.GetFileNameWithoutExtension(MyAPIGateway.Session.CurrentPath));
+			var fileName = string.Format("Log_{0}.log", Path.GetFileNameWithoutExtension(MyAPIGateway.Session.CurrentPath));
 
 			if (MyAPIGateway.Utilities.FileExistsInLocalStorage(fileName, typeof(Logger)))
 			{

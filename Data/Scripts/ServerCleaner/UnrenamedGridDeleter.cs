@@ -6,6 +6,9 @@ using VRage.Game.ModAPI;
 
 namespace ServerCleaner
 {
+	/// <summary>
+	/// Deleter of grids that have default names. Does not delete the ships matched by the RespawnShipDeleter class.
+	/// </summary>
 	public class UnrenamedGridDeleter : RepeatedDeleter<IMyCubeGrid, ComplexCubeGridDeletionContext>
 	{
 		public static Regex[] DefaultNameRegexes = new[]

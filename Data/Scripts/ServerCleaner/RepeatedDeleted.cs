@@ -26,6 +26,9 @@ namespace ServerCleaner
 					if (entity == null)
 						continue;
 
+					if (untypedEntity.Physics == null)
+						continue; // // projection/block placement indicator?
+
 					if (untypedEntity.MarkedForClose)
 					{
 						Utilities.ShowMessageFromServer("{0} is already marked for close :/", untypedEntity.DisplayName);
