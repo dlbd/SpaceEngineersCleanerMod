@@ -25,5 +25,6 @@
 		public int UnrenamedGridDeletion_Interval = 13 * 60 * 1000;
 		public int UnrenamedGridDeletion_PlayerDistanceThresholdForWarning = 0;
 		public int UnrenamedGridDeletion_PlayerDistanceThresholdForDeletion = 1000;
+		public bool UnrenamedGridDeletion_WarnOnly = true;
 	}
 }

@@ -21,12 +21,15 @@ namespace ServerCleaner
 			new Regex("^Platform [0-9]+$")
 		};
 
-		public UnrenamedGridDeleter(double interval, double playerDistanceThresholdForWarning, double playerDistanceThresholdForDeletion) : base(interval, new ComplexCubeGridDeletionContext()
+		private bool warnOnly;
+
+		public UnrenamedGridDeleter(double interval, double playerDistanceThresholdForWarning, double playerDistanceThresholdForDeletion, bool warnOnly) : base(interval, new ComplexCubeGridDeletionContext()
 		{
 			PlayerDistanceThreshold = playerDistanceThresholdForWarning,
 			PlayerDistanceThresholdForActualDeletion = playerDistanceThresholdForDeletion
 		})
 		{
+			this.warnOnly = warnOnly;
 		}
 
 		protected override bool BeforeDelete(IMyCubeGrid entity, ComplexCubeGridDeletionContext context)
@@ -64,12 +67,11 @@ namespace ServerCleaner
 			if (context.PlayerDistanceThresholdForActualDeletion > 0 && Utilities.AnyWithinDistance(entity.GetPosition(), context.PlayerPositions, context.PlayerDistanceThresholdForActualDeletion))
 				return false;
 
-			// Testing. Do not actually delete.
-			// TODO: change this later
-			return false;
+			if (warnOnly)
+				return false;
 
-			/*context.NameStringsForDeletion.Add(nameString);
-			return true;*/
+			context.NameStringsForDeletion.Add(nameString);
+			return true;
 		}
 
 		public static bool IsNameDefault(string name)

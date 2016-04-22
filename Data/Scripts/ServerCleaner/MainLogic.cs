@@ -77,19 +77,34 @@ namespace ServerCleaner
 				var repeatedActions = new List<RepeatedAction>();
 
 				if (config.FloatingObjectDeletion_Enabled)
-					repeatedActions.Add(new FloatingObjectDeleter(config.FloatingObjectDeletion_Interval, config.FloatingObjectDeletion_PlayerDistanceThreshold));
+					repeatedActions.Add(new FloatingObjectDeleter(
+						config.FloatingObjectDeletion_Interval,
+						config.FloatingObjectDeletion_PlayerDistanceThreshold));
 
 				if (config.UnownedGridDeletion_Enabled)
-					repeatedActions.Add(new UnownedGridDeleter(config.UnownedGridDeletion_Interval, config.UnownedGridDeletion_PlayerDistanceThreshold, config.UnownedGridDeletion_BlockCountThreshold));
+					repeatedActions.Add(new UnownedGridDeleter(
+						config.UnownedGridDeletion_Interval,
+						config.UnownedGridDeletion_PlayerDistanceThreshold,
+						config.UnownedGridDeletion_BlockCountThreshold));
 
 				if (config.DamagedGridDeletion_Enabled)
-					repeatedActions.Add(new DamagedGridDeleter(config.DamagedGridDeletion_Interval, config.DamagedGridDeletion_PlayerDistanceThreshold, config.DamagedGridDeletion_BlockCountThreshold));
+					repeatedActions.Add(new DamagedGridDeleter(
+						config.DamagedGridDeletion_Interval,
+						config.DamagedGridDeletion_PlayerDistanceThreshold,
+						config.DamagedGridDeletion_BlockCountThreshold));
 
 				if (config.RespawnShipDeletion_Enabled)
-					repeatedActions.Add(new RespawnShipDeleter(config.RespawnShipDeletion_Interval, config.RespawnShipDeletion_PlayerDistanceThresholdForWarning, config.RespawnShipDeletion_PlayerDistanceThresholdForDeletion));
+					repeatedActions.Add(new RespawnShipDeleter(
+						config.RespawnShipDeletion_Interval,
+						config.RespawnShipDeletion_PlayerDistanceThresholdForWarning,
+						config.RespawnShipDeletion_PlayerDistanceThresholdForDeletion));
 
 				if (config.UnrenamedGridDeletion_Enabled)
-					repeatedActions.Add(new UnrenamedGridDeleter(config.UnrenamedGridDeletion_Interval, config.UnrenamedGridDeletion_PlayerDistanceThresholdForWarning, config.UnrenamedGridDeletion_PlayerDistanceThresholdForDeletion));
+					repeatedActions.Add(new UnrenamedGridDeleter(
+						config.UnrenamedGridDeletion_Interval,
+						config.UnrenamedGridDeletion_PlayerDistanceThresholdForWarning,
+						config.UnrenamedGridDeletion_PlayerDistanceThresholdForDeletion,
+						config.UnrenamedGridDeletion_WarnOnly));
 
 				this.repeatedActions = repeatedActions.ToArray();
 			}
