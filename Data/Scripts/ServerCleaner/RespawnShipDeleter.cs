@@ -54,7 +54,7 @@ namespace ServerCleaner
 			if (context.EntitiesForDeletion.Count > 0)
 			{
 				Utilities.ShowMessageFromServer("Deleted {0} respawn ship(s) that had no owner online and no players within {1} m: {2}.",
-					context.EntitiesForDeletion.Count, context.PlayerDistanceThresholdForActualDeletion, string.Join(", ", context.NameStringsForLaterDeletion));
+					context.EntitiesForDeletion.Count, context.PlayerDistanceThresholdForActualDeletion, string.Join(", ", context.NameStringsForDeletion));
 			}
 
 			if (context.NameStringsForLaterDeletion.Count > 0)

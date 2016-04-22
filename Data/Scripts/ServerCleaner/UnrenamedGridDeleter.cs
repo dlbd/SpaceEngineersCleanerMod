@@ -87,13 +87,13 @@ namespace ServerCleaner
 		{
 			if (context.EntitiesForDeletion.Count > 0)
 			{
-				Utilities.ShowMessageFromServer("Deleted {0} unrenamed ship(s) with no antennas or beacons that had no owner online and no players within {1} m: {2}.",
-					context.EntitiesForDeletion.Count, context.PlayerDistanceThresholdForActualDeletion, string.Join(", ", context.NameStringsForLaterDeletion));
+				Utilities.ShowMessageFromServer("Deleted {0} unrenamed grid(s) with no antennas or beacons that had no owner online and no players within {1} m: {2}.",
+					context.EntitiesForDeletion.Count, context.PlayerDistanceThresholdForActualDeletion, string.Join(", ", context.NameStringsForDeletion));
 			}
 
 			if (context.NameStringsForLaterDeletion.Count > 0)
 			{
-				Utilities.ShowMessageFromServer("I'm going to delete the following unrenamed ship(s) later unless they are renamed or an antenna or a beacon is added: {0}",
+				Utilities.ShowMessageFromServer("I'm going to delete the following unrenamed grid(s) later unless they are renamed or an antenna or a beacon is added: {0}",
 					string.Join(", ", context.NameStringsForLaterDeletion));
 			}
 		}
