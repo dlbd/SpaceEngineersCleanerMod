@@ -28,7 +28,7 @@ namespace ServerCleaner
 			if (context.CurrentEntitySlimBlocks.Any(slimBlock => Utilities.IsConnectableToOtherGrids(slimBlock)))
 				return false;
 
-			return context.CurrentEntitySlimBlocks.Any(slimBlock => slimBlock.AccumulatedDamage > 0); ;
+			return context.CurrentEntitySlimBlocks.Any(slimBlock => slimBlock.CurrentDamage > 0);
 		}
 
 		protected override void AfterDeletion(CubeGridDeletionContext context)

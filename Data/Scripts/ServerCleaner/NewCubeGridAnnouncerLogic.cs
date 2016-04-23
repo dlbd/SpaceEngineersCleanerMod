@@ -10,21 +10,22 @@ using VRage.ModAPI;
 
 namespace ServerCleaner
 {
-	[MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation)]
+	[MySessionComponentDescriptor(MyUpdateOrder.AfterSimulation)] // Cargo ships are spawned in BeforeSimulation. Perhaps, by the time AfterSimulation runs, they will be fully spawned...
 	public class NewCubeGridAnnouncerLogic : MySessionComponentBase
 	{
 		// TODO: expand this to delete cargo ships (esp. Argentavis) that enter gravity wells
 
 		public const int AnnounceEveryTicks = 500;
 
-		private bool initialized, unloaded, registeredMessageHandler, registeredEntityAddHandler;
+		private bool initialized, unloaded, registeredEntityAddHandler;
 
 		private List<string> cubeGridNamesToAnnounce = new List<string>();
+		private List<IMyCubeGrid> cubeGridsToCheck = new List<IMyCubeGrid>();
 		private int ticks;
 		
-		public override void UpdateBeforeSimulation()
+		public override void UpdateAfterSimulation()
 		{
-			base.UpdateBeforeSimulation();
+			base.UpdateAfterSimulation();
 
 			if (unloaded || !Utilities.IsGameRunning())
 				return;
@@ -35,35 +36,41 @@ namespace ServerCleaner
 				initialized = true;
 			}
 
+			if (cubeGridsToCheck.Count > 0) // TODO: check this less frequently (just testing at the moment)
+			{
+				foreach (var cubeGrid in cubeGridsToCheck)
+					cubeGridNamesToAnnounce.Add(GetCubeGridNameToAnnounce(cubeGrid));
+
+				cubeGridsToCheck.Clear();
+			}
+
 			ticks++;
 
-			if (cubeGridNamesToAnnounce.Count > 0 && ticks % AnnounceEveryTicks == 0)
+			if (ticks % AnnounceEveryTicks == 0 && cubeGridNamesToAnnounce.Count > 0)
 			{
-				Utilities.ShowMessageFromServer("New grid(s) appeared: {0}.", string.Join(", ", cubeGridNamesToAnnounce));
-				cubeGridNamesToAnnounce.Clear();
+				if (cubeGridNamesToAnnounce.Count > 0)
+				{
+					Utilities.ShowMessageFromServer("New grid(s) appeared: {0}.", string.Join(", ", cubeGridNamesToAnnounce));
+					cubeGridNamesToAnnounce.Clear();
+				}
+
 				ticks = 0;
 			}
 		}
 
 		private void Initialize()
 		{
-			if (MyAPIGateway.Multiplayer.IsServer)
+			if (!MyAPIGateway.Multiplayer.MultiplayerActive || MyAPIGateway.Multiplayer.IsServer)
 			{
-				MyAPIGateway.Multiplayer.RegisterMessageHandler(MessageIds.MessageFromServer, HandleCubeGridAddedOnClient);
-				registeredMessageHandler = true;
+				MyAPIGateway.Entities.OnEntityAdd += Entities_OnEntityAdd;
+				registeredEntityAddHandler = true;
 			}
-
-			MyAPIGateway.Entities.OnEntityAdd += Entities_OnEntityAdd;
-			registeredEntityAddHandler = true;
 		}
 
 		protected override void UnloadData()
 		{
 			if (!unloaded)
 			{
-				if (registeredMessageHandler)
-					MyAPIGateway.Multiplayer.UnregisterMessageHandler(MessageIds.CubeGridAddedOnClient, HandleCubeGridAddedOnClient);
-
 				if (registeredEntityAddHandler)
 					MyAPIGateway.Entities.OnEntityAdd -= Entities_OnEntityAdd;
 
@@ -75,27 +82,61 @@ namespace ServerCleaner
 
 		private void Entities_OnEntityAdd(IMyEntity entity)
 		{
-			var cubeGrid = entity as IMyCubeGrid;
+			try
+			{
+				var cubeGrid = entity as IMyCubeGrid;
 
-			if (cubeGrid == null)
-				return;
+				if (cubeGrid == null)
+					return;
 
-			if (cubeGrid.Physics == null)
-				return; // projection/block placement indicator?
+				if (cubeGrid.Physics == null)
+					return; // projection/block placement indicator?
 
-			if (!MyAPIGateway.Multiplayer.MultiplayerActive || MyAPIGateway.Multiplayer.IsServer)
-				cubeGridNamesToAnnounce.Add(cubeGrid.DisplayName);
-			else
-				MyAPIGateway.Multiplayer.SendMessageToServer(MessageIds.CubeGridAddedOnClient, Encoding.Unicode.GetBytes(cubeGrid.DisplayName));
+				var owners = cubeGrid.SmallOwners;
+
+				var identities = new List<IMyIdentity>();
+				MyAPIGateway.Players.GetAllIdentites(identities, identity => identity != null && owners.Contains(identity.PlayerId));
+
+				// Is there an easier way to detect non-human players?
+
+				var notHuman = identities.Count > 0 && identities
+					.Select(identity => MyAPIGateway.Session.Factions.TryGetPlayerFaction(identity.PlayerId))
+					.All(faction => faction != null && !faction.AcceptHumans);
+
+				var nameString = Utilities.GetOwnerNameString(owners, identities);
+				cubeGridNamesToAnnounce.Add(string.Format("{0} (owned by {1}{2})", cubeGrid.DisplayName, nameString,
+					notHuman ? " - is that a drone/cargo ship?" : ""));
+			}
+			catch (Exception ex)
+			{
+				Logger.WriteLine("Exception in Entities_OnEntityAdd(): {0}", ex);
+			}
 		}
-		
-		private void HandleCubeGridAddedOnClient(byte[] encodedName)
+
+		private string GetCubeGridNameToAnnounce(IMyCubeGrid cubeGrid)
 		{
-			var name = Encoding.Unicode.GetString(encodedName);
+			try
+			{
+				var owners = cubeGrid.SmallOwners;
 
-			Logger.WriteLine("Client reports entity addtion: {0}", encodedName);
+				var identities = new List<IMyIdentity>();
+				MyAPIGateway.Players.GetAllIdentites(identities, identity => identity != null && owners.Contains(identity.PlayerId));
 
-			// TODO: check logs for duplicates
+				// Is there an easier way to detect non-human players?
+
+				var notHuman = identities.Count > 0 && identities
+					.Select(identity => MyAPIGateway.Session.Factions.TryGetPlayerFaction(identity.PlayerId))
+					.All(faction => faction != null && !faction.AcceptHumans);
+
+				var nameString = Utilities.GetOwnerNameString(owners, identities);
+				return string.Format("{0} (owned by {1}{2})", cubeGrid.DisplayName, nameString,
+					notHuman ? " - is that a drone/cargo ship?" : "");
+			}
+			catch (Exception ex)
+			{
+				Logger.WriteLine("Exception in GetCubeGridNameToAnnounce", cubeGrid);
+				return "a thing full of errors :/";
+			}
 		}
 	}
 }

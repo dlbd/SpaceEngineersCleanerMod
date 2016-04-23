@@ -89,11 +89,18 @@ namespace ServerCleaner
 
 		public static string GetOwnerNameString(List<long> ownerIds, List<IMyIdentity> playerIdentities)
 		{
-			var result = string.Join(" & ", playerIdentities
-				.Where(identity => ownerIds.Contains(identity.PlayerId))
-				.Select(identity => identity.DisplayName));
+			if (ownerIds.Count == 0)
+				return "noone";
 
-			return result.Length > 0 ? result : "noone";
+			var names = playerIdentities
+				.Where(identity => ownerIds.Contains(identity.PlayerId))
+				.Select(identity => identity.DisplayName)
+				.ToList();
+
+			if (names.Count != ownerIds.Count)
+				names.Add("???");
+
+			return string.Join(" & ", names);
 		}
 	}
 }

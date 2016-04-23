@@ -26,20 +26,11 @@ namespace ServerCleaner
 					if (entity == null)
 						continue;
 
+					if (untypedEntity.MarkedForClose || untypedEntity.Closed)
+						continue;
+
 					if (untypedEntity.Physics == null)
 						continue; // // projection/block placement indicator?
-
-					if (untypedEntity.MarkedForClose)
-					{
-						Utilities.ShowMessageFromServer("{0} is already marked for close :/", untypedEntity.DisplayName);
-						continue;
-					}
-
-					if (untypedEntity.Closed)
-					{
-						Utilities.ShowMessageFromServer("{0} is already closed :/", untypedEntity.DisplayName);
-						continue;
-					}
 
 					if (context.PlayerDistanceThreshold > 0 && Utilities.AnyWithinDistance(untypedEntity.GetPosition(), context.PlayerPositions, context.PlayerDistanceThreshold))
 						continue;
