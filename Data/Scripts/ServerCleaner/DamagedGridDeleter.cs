@@ -36,7 +36,7 @@ namespace ServerCleaner
 			if (context.EntitiesForDeletion.Count == 0)
 				return;
 
-			Utilities.ShowMessageFromServer("Deleted {0} grid(s) that had fewer than {1} blocks, no players within {2} m, and some of the blocks were damaged: {3}.",
+			Utilities.ShowMessageFromServerToEveryone("Deleted {0} grid(s) that had fewer than {1} blocks, no players within {2} m, and some of the blocks were damaged: {3}.",
 				context.EntitiesForDeletion.Count, blockCountThreshold, context.PlayerDistanceThreshold, string.Join(", ", context.EntitiesForDeletionNames));
 		}
 	}

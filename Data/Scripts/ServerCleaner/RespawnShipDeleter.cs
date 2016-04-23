@@ -53,13 +53,13 @@ namespace ServerCleaner
 		{
 			if (context.EntitiesForDeletion.Count > 0)
 			{
-				Utilities.ShowMessageFromServer("Deleted {0} respawn ship(s) that had no owner online and no players within {1} m: {2}.",
+				Utilities.ShowMessageFromServerToEveryone("Deleted {0} respawn ship(s) that had no owner online and no players within {1} m: {2}.",
 					context.EntitiesForDeletion.Count, context.PlayerDistanceThresholdForActualDeletion, string.Join(", ", context.NameStringsForDeletion));
 			}
 
 			if (context.NameStringsForLaterDeletion.Count > 0)
 			{
-				Utilities.ShowMessageFromServer("I'm going to delete the following respawn ship(s) later unless they are renamed: {0}",
+				Utilities.ShowMessageFromServerToEveryone("I'm going to delete the following respawn ship(s) later unless they are renamed: {0}",
 					string.Join(", ", context.NameStringsForLaterDeletion));
 			}
 		}

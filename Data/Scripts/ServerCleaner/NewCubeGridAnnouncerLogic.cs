@@ -50,7 +50,7 @@ namespace ServerCleaner
 			{
 				if (cubeGridNamesToAnnounce.Count > 0)
 				{
-					Utilities.ShowMessageFromServer("New grid(s) appeared: {0}.", string.Join(", ", cubeGridNamesToAnnounce));
+					Utilities.ShowMessageFromServerToEveryone("New grid(s) appeared: {0}.", string.Join(", ", cubeGridNamesToAnnounce));
 					cubeGridNamesToAnnounce.Clear();
 				}
 
@@ -92,20 +92,7 @@ namespace ServerCleaner
 				if (cubeGrid.Physics == null)
 					return; // projection/block placement indicator?
 
-				var owners = cubeGrid.SmallOwners;
-
-				var identities = new List<IMyIdentity>();
-				MyAPIGateway.Players.GetAllIdentites(identities, identity => identity != null && owners.Contains(identity.PlayerId));
-
-				// Is there an easier way to detect non-human players?
-
-				var notHuman = identities.Count > 0 && identities
-					.Select(identity => MyAPIGateway.Session.Factions.TryGetPlayerFaction(identity.PlayerId))
-					.All(faction => faction != null && !faction.AcceptHumans);
-
-				var nameString = Utilities.GetOwnerNameString(owners, identities);
-				cubeGridNamesToAnnounce.Add(string.Format("{0} (owned by {1}{2})", cubeGrid.DisplayName, nameString,
-					notHuman ? " - is that a drone/cargo ship?" : ""));
+				cubeGridsToCheck.Add(cubeGrid);
 			}
 			catch (Exception ex)
 			{
@@ -134,7 +121,7 @@ namespace ServerCleaner
 			}
 			catch (Exception ex)
 			{
-				Logger.WriteLine("Exception in GetCubeGridNameToAnnounce", cubeGrid);
+				Logger.WriteLine("Exception in GetCubeGridNameToAnnounce", ex);
 				return "a thing full of errors :/";
 			}
 		}

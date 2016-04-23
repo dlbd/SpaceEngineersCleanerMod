@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration.cs" />
+    <Compile Include="IUpdatableAfterSimulation.cs" />
     <Compile Include="NewCubeGridAnnouncerLogic.cs" />
     <Compile Include="FloatingObjectDeleter.cs" />
     <Compile Include="Logger.cs" />

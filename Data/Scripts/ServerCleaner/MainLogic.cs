@@ -15,7 +15,7 @@ namespace ServerCleaner
 		// TODO: start collecting player login times for future inactive player removal
 
 		private bool initialized, unloaded, registeredMessageHandler;
-		private RepeatedAction[] repeatedActions;
+		private IUpdatableAfterSimulation[] updatables;
 
 		public override void UpdateAfterSimulation()
 		{
@@ -30,10 +30,10 @@ namespace ServerCleaner
 				initialized = true;
 			}
 
-			if (repeatedActions != null)
+			if (updatables != null)
 			{
-				for (var actionIndex = 0; actionIndex < repeatedActions.Length; actionIndex++)
-					repeatedActions[actionIndex].UpdateAfterSimulation();
+				for (var actionIndex = 0; actionIndex < updatables.Length; actionIndex++)
+					updatables[actionIndex].UpdateAfterSimulation();
 			}
 		}
 
@@ -66,6 +66,42 @@ namespace ServerCleaner
 			return config;
 		}
 
+		private List<string> GetVipNames()
+		{
+			var vipNames = new List<string>();
+
+			try
+			{
+				var fileName = string.Format("VIP_{0}.txt", Path.GetFileNameWithoutExtension(MyAPIGateway.Session.CurrentPath));
+
+				if (!MyAPIGateway.Utilities.FileExistsInLocalStorage(fileName, GetType()))
+				{
+					using (var writer = MyAPIGateway.Utilities.WriteFileInLocalStorage(fileName, GetType())) // Create an empty file
+					{
+					}
+				}
+
+				using (var reader = MyAPIGateway.Utilities.ReadFileInLocalStorage(fileName, GetType()))
+				{
+					string line;
+					while ((line = reader.ReadLine()) != null)
+					{
+						line = line.Trim();
+						if (line.Length == 0)
+							continue;
+
+						vipNames.Add(line);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Logger.WriteLine("Exception in MainLogic.GetVipNames(), using an empty list: {0}", ex);
+			}
+
+			return vipNames;
+		}
+
 		private void Initialize()
 		{
 			if (!MyAPIGateway.Multiplayer.MultiplayerActive || MyAPIGateway.Multiplayer.IsServer)
@@ -73,40 +109,42 @@ namespace ServerCleaner
 				Logger.Initialize();
 
 				var config = GetConfiguration();
+				var vipNames = GetVipNames();
 
-				var repeatedActions = new List<RepeatedAction>();
+				var updatables = new List<IUpdatableAfterSimulation>();
 
 				if (config.FloatingObjectDeletion_Enabled)
-					repeatedActions.Add(new FloatingObjectDeleter(
+					updatables.Add(new FloatingObjectDeleter(
 						config.FloatingObjectDeletion_Interval,
 						config.FloatingObjectDeletion_PlayerDistanceThreshold));
 
 				if (config.UnownedGridDeletion_Enabled)
-					repeatedActions.Add(new UnownedGridDeleter(
+					updatables.Add(new UnownedGridDeleter(
 						config.UnownedGridDeletion_Interval,
 						config.UnownedGridDeletion_PlayerDistanceThreshold,
 						config.UnownedGridDeletion_BlockCountThreshold));
 
 				if (config.DamagedGridDeletion_Enabled)
-					repeatedActions.Add(new DamagedGridDeleter(
+					updatables.Add(new DamagedGridDeleter(
 						config.DamagedGridDeletion_Interval,
 						config.DamagedGridDeletion_PlayerDistanceThreshold,
 						config.DamagedGridDeletion_BlockCountThreshold));
 
 				if (config.RespawnShipDeletion_Enabled)
-					repeatedActions.Add(new RespawnShipDeleter(
+					updatables.Add(new RespawnShipDeleter(
 						config.RespawnShipDeletion_Interval,
 						config.RespawnShipDeletion_PlayerDistanceThresholdForWarning,
 						config.RespawnShipDeletion_PlayerDistanceThresholdForDeletion));
 
 				if (config.UnrenamedGridDeletion_Enabled)
-					repeatedActions.Add(new UnrenamedGridDeleter(
+					updatables.Add(new UnrenamedGridDeleter(
 						config.UnrenamedGridDeletion_Interval,
 						config.UnrenamedGridDeletion_PlayerDistanceThresholdForWarning,
 						config.UnrenamedGridDeletion_PlayerDistanceThresholdForDeletion,
-						config.UnrenamedGridDeletion_WarnOnly));
+						config.UnrenamedGridDeletion_WarnOnly,
+						vipNames));
 
-				this.repeatedActions = repeatedActions.ToArray();
+				this.updatables = updatables.ToArray();
 			}
 
 			if (MyAPIGateway.Multiplayer.MultiplayerActive && !MyAPIGateway.Multiplayer.IsServer)

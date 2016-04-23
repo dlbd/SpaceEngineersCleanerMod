@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -25,7 +26,7 @@ namespace ServerCleaner
 				MyAPIGateway.Utilities != null;
 		}
 
-		public static void ShowMessageFromServer(string text)
+		public static void ShowMessageFromServer(string text, Predicate<IMyPlayer> playerSelector = null)
 		{
 			Logger.WriteLine("{0}: {1}", ServerNameInChat, text);
 
@@ -41,11 +42,21 @@ namespace ServerCleaner
 				MyAPIGateway.Players.GetPlayers(players, p => p != null);
 
 				foreach (var player in players)
+				{
+					if (playerSelector != null && !playerSelector(player))
+						continue;
+
 					MyAPIGateway.Multiplayer.SendMessageTo(MessageIds.MessageFromServer, bytes, player.SteamUserId);
+				}
 			}
 		}
 
-		public static void ShowMessageFromServer(string format, params object[] args)
+		public static void ShowMessageFromServerToEveryone(string format, params object[] args)
+		{
+			ShowMessageFromServer(string.Format(format, args));
+		}
+
+		public static void ShowMessageFromServerToAdmin(string format, params object[] args)
 		{
 			ShowMessageFromServer(string.Format(format, args));
 		}

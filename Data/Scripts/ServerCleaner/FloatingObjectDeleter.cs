@@ -14,7 +14,7 @@ namespace ServerCleaner
 			if (context.EntitiesForDeletion.Count == 0)
 				return;
 
-			Utilities.ShowMessageFromServer("Deleted {0} floating object(s) with no players within {1} m.", context.EntitiesForDeletion.Count, context.PlayerDistanceThreshold);
+			Utilities.ShowMessageFromServerToEveryone("Deleted {0} floating object(s) with no players within {1} m.", context.EntitiesForDeletion.Count, context.PlayerDistanceThreshold);
 		}
 	}
 }

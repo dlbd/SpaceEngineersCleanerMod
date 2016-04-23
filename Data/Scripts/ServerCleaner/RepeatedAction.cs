@@ -1,10 +1,8 @@
 ﻿using System.Timers;
 
-using Sandbox.ModAPI;
-
 namespace ServerCleaner
 {
-	public abstract class RepeatedAction
+	public abstract class RepeatedAction : IUpdatableAfterSimulation
 	{
 		private Timer timer;
 
