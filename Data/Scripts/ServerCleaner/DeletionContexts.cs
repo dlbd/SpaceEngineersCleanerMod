@@ -26,13 +26,9 @@ namespace ServerCleaner
 			Players.Clear();
 			MyAPIGateway.Players.GetPlayers(Players, player => player != null);
 
-			if (PlayerDistanceThreshold > 0)
-			{
-				PlayerPositions.Clear();
-
-				foreach (var player in Players)
-					PlayerPositions.Add(player.GetPosition());
-			}
+			PlayerPositions.Clear(); // Player positions are used by some deleters even when PlayerDistanceThreshold == 0
+			foreach (var player in Players)
+				PlayerPositions.Add(player.GetPosition());
 
 			EntitiesForDeletion.Clear();
 			EntitiesForDeletionNames.Clear();
