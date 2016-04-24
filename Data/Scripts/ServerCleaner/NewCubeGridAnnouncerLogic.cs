@@ -15,7 +15,7 @@ namespace ServerCleaner
 	{
 		// TODO: expand this to delete cargo ships (esp. Argentavis) that enter gravity wells
 
-		public const int AnnounceEveryTicks = 500;
+		public const int CheckAndAnnounceEveryTicks = 1000;
 
 		private bool initialized, unloaded, registeredEntityAddHandler;
 
@@ -36,18 +36,18 @@ namespace ServerCleaner
 				initialized = true;
 			}
 
-			if (cubeGridsToCheck.Count > 0) // TODO: check this less frequently (just testing at the moment)
-			{
-				foreach (var cubeGrid in cubeGridsToCheck)
-					cubeGridNamesToAnnounce.Add(GetCubeGridNameToAnnounce(cubeGrid));
-
-				cubeGridsToCheck.Clear();
-			}
-
 			ticks++;
 
-			if (ticks % AnnounceEveryTicks == 0 && cubeGridNamesToAnnounce.Count > 0)
+			if (ticks % CheckAndAnnounceEveryTicks == 0)
 			{
+				if (cubeGridsToCheck.Count > 0)
+				{
+					foreach (var cubeGrid in cubeGridsToCheck)
+						cubeGridNamesToAnnounce.Add(GetCubeGridNameToAnnounce(cubeGrid));
+
+					cubeGridsToCheck.Clear();
+				}
+
 				if (cubeGridNamesToAnnounce.Count > 0)
 				{
 					Utilities.ShowMessageFromServerToEveryone("New grid(s) appeared: {0}.", string.Join(", ", cubeGridNamesToAnnounce));

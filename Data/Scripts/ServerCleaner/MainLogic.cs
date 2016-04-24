@@ -13,6 +13,8 @@ namespace ServerCleaner
 	{
 		// TODO: something that deletes shot up pirate drones
 		// TODO: start collecting player login times for future inactive player removal
+		// TODO: chat messages and popups from a file
+		// TODO: popups for players with grids in danger of being deleted
 
 		private bool initialized, unloaded, registeredMessageHandler;
 		private IUpdatableAfterSimulation[] updatables;
@@ -72,7 +74,7 @@ namespace ServerCleaner
 
 			try
 			{
-				var fileName = string.Format("VIP_{0}.txt", Path.GetFileNameWithoutExtension(MyAPIGateway.Session.CurrentPath));
+				var fileName = string.Format("VIP_Names_{0}.txt", Path.GetFileNameWithoutExtension(MyAPIGateway.Session.CurrentPath));
 
 				if (!MyAPIGateway.Utilities.FileExistsInLocalStorage(fileName, GetType()))
 				{
