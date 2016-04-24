@@ -100,7 +100,7 @@
     <Compile Include="MainLogic.cs" />
     <Compile Include="PlayerSpammer.cs" />
     <Compile Include="DeletionContexts.cs" />
-    <Compile Include="RepeatedDeleted.cs" />
+    <Compile Include="RepeatedDeleter.cs" />
     <Compile Include="RepeatedAction.cs" />
     <Compile Include="RespawnShipDeleter.cs" />
     <Compile Include="TimerFactory.cs" />
