@@ -149,6 +149,9 @@ namespace ServerCleaner
 						config.UnrenamedGridDeletion_WarnOnly,
 						vipNames));
 
+				if (config.MessagesFromFile_Enabled)
+					updatables.Add(new MessageFromFileShower(config.MessagesFromFile_Interval));
+
 				this.updatables = updatables.ToArray();
 			}
 

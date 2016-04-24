@@ -100,6 +100,7 @@
     <Compile Include="MainLogic.cs" />
     <Compile Include="Updatables\Deleters\DeletionContexts.cs" />
     <Compile Include="Updatables\Deleters\RepeatedDeleter.cs" />
+    <Compile Include="Updatables\MessageFromFileShower.cs" />
     <Compile Include="Updatables\RepeatedAction.cs" />
     <Compile Include="Updatables\Deleters\RespawnShipDeleter.cs" />
     <Compile Include="TimerFactory.cs" />

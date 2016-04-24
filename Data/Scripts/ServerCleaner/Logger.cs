@@ -27,7 +27,7 @@ namespace ServerCleaner
 				}
 			}
 
-			writer = MyAPIGateway.Utilities.WriteFileInLocalStorage(fileName, typeof(Logger));
+			writer = TextWriter.Synchronized(MyAPIGateway.Utilities.WriteFileInLocalStorage(fileName, typeof(Logger)));
 			writer.Write(oldContent);
 			writer.Flush();
 

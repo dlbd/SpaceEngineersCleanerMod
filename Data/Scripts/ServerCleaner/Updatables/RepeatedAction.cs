@@ -4,6 +4,7 @@ namespace ServerCleaner.Updatables
 {
 	public abstract class RepeatedAction : IUpdatableAfterSimulation
 	{
+		private bool runOnNextUpdate;
 		private Timer timer;
 
 		public RepeatedAction(double interval)
@@ -11,21 +12,24 @@ namespace ServerCleaner.Updatables
 			timer = TimerFactory.CreateTimer();
 			timer.AutoReset = true;
 			timer.Interval = interval;
-			timer.Elapsed += (sender, e) => ShouldRun = true;
+			timer.Elapsed += (sender, e) => runOnNextUpdate = ShouldRun();
 			timer.Start();
 		}
 
 		public void UpdateAfterSimulation()
 		{
-			if (!ShouldRun)
+			if (!runOnNextUpdate)
 				return;
 
-			ShouldRun = false;
+			runOnNextUpdate = false;
 			Run();
 		}
 
-		protected abstract void Run();
+		protected virtual bool ShouldRun()
+		{
+			return true;
+		}
 
-		public virtual bool ShouldRun { get; private set; }
+		protected abstract void Run();
 	}
 }
