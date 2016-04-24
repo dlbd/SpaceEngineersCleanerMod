@@ -1,6 +1,6 @@
 ﻿using VRage.Game.ModAPI;
 
-namespace ServerCleaner
+namespace ServerCleaner.Updatables.Deleters
 {
 	public class FloatingObjectDeleter : RepeatedDeleter<IMyFloatingObject, DeletionContext<IMyFloatingObject>>
 	{

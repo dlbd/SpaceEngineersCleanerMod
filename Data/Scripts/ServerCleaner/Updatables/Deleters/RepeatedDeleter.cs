@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ServerCleaner
+namespace ServerCleaner.Updatables.Deleters
 {
 	public abstract class RepeatedDeleter<TEntity, TDeletionContext> : RepeatedAction
 		where TEntity : class

@@ -1,4 +1,4 @@
-﻿namespace ServerCleaner
+﻿namespace ServerCleaner.Updatables
 {
 	public interface IUpdatableAfterSimulation
 	{

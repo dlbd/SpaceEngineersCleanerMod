@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using Sandbox.ModAPI.Ingame;
 using VRage.Game.ModAPI;
 
-namespace ServerCleaner
+namespace ServerCleaner.Updatables.Deleters
 {
 	/// <summary>
 	/// Deleter of grids that have default names. Does not delete the ships matched by the RespawnShipDeleter class.

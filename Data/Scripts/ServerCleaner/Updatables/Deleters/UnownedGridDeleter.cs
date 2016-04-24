@@ -2,7 +2,7 @@
 
 using VRage.Game.ModAPI;
 
-namespace ServerCleaner
+namespace ServerCleaner.Updatables.Deleters
 {
 	/// <summary>
 	/// Deleter of cubegrids that have few blocks and no owners.

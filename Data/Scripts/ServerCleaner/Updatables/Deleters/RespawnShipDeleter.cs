@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
-using Sandbox.ModAPI;
 using VRage.Game.ModAPI;
 
-namespace ServerCleaner
+namespace ServerCleaner.Updatables.Deleters
 {
 	public class RespawnShipDeleter : RepeatedDeleter<IMyCubeGrid, ComplexCubeGridDeletionContext>
 	{

@@ -1,6 +1,6 @@
 ﻿using System.Timers;
 
-namespace ServerCleaner
+namespace ServerCleaner.Updatables
 {
 	public abstract class RepeatedAction : IUpdatableAfterSimulation
 	{
