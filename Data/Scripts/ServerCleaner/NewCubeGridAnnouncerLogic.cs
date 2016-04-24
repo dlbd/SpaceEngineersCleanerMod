@@ -50,7 +50,7 @@ namespace ServerCleaner
 
 				if (cubeGridNamesToAnnounce.Count > 0)
 				{
-					Utilities.ShowMessageFromServerToEveryone("New grid(s) appeared: {0}.", string.Join(", ", cubeGridNamesToAnnounce));
+					Utilities.ShowMessageFromServerToAdmins("New grid(s) appeared: {0}.", string.Join(", ", cubeGridNamesToAnnounce));
 					cubeGridNamesToAnnounce.Clear();
 				}
 

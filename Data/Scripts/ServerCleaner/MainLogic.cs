@@ -16,7 +16,7 @@ namespace ServerCleaner
 		// TODO: chat messages and popups from a file
 		// TODO: popups for players with grids in danger of being deleted
 
-		private bool initialized, unloaded, registeredMessageHandler;
+		private bool initialized, unloaded, registeredMessageHandlers;
 		private IUpdatableAfterSimulation[] updatables;
 
 		public override void UpdateAfterSimulation()
@@ -152,7 +152,9 @@ namespace ServerCleaner
 			if (MyAPIGateway.Multiplayer.MultiplayerActive && !MyAPIGateway.Multiplayer.IsServer)
 			{
 				MyAPIGateway.Multiplayer.RegisterMessageHandler(MessageIds.MessageFromServer, ShowMessageFromServer);
-				registeredMessageHandler = true;
+				MyAPIGateway.Multiplayer.RegisterMessageHandler(MessageIds.PopupFromServer, ShowPopupFromServer);
+
+				registeredMessageHandlers = true;
 			}
 		}
 
@@ -162,8 +164,13 @@ namespace ServerCleaner
 			{
 				TimerFactory.CloseAllTimers();
 
-				if (registeredMessageHandler)
+				if (registeredMessageHandlers)
+				{
 					MyAPIGateway.Multiplayer.UnregisterMessageHandler(MessageIds.MessageFromServer, ShowMessageFromServer);
+					MyAPIGateway.Multiplayer.UnregisterMessageHandler(MessageIds.PopupFromServer, ShowPopupFromServer);
+
+					registeredMessageHandlers = false;
+				}
 
 				Logger.Close();
 
@@ -176,6 +183,17 @@ namespace ServerCleaner
 		private void ShowMessageFromServer(byte[] encodedMessage)
 		{
 			Utilities.ShowMessageFromServerOnClient(Encoding.Unicode.GetString(encodedMessage));
+		}
+
+		private void ShowPopupFromServer(byte[] encodedMessage)
+		{
+			var message = Encoding.Unicode.GetString(encodedMessage);
+			var splitMessage = message.Split('\0');
+
+			if (splitMessage.Length != 3)
+				Logger.WriteLine("Invalid popup message");
+			else
+				Utilities.ShowPopupFromServerOnClient(splitMessage[0], splitMessage[1], splitMessage[2]);
 		}
 	}
 }

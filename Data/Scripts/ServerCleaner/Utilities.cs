@@ -26,6 +26,20 @@ namespace ServerCleaner
 				MyAPIGateway.Utilities != null;
 		}
 
+		private static void SendMessageToPlayers(ushort id, byte[] bytes, Predicate<IMyPlayer> playerSelector = null)
+		{
+			var players = new List<IMyPlayer>();
+			MyAPIGateway.Players.GetPlayers(players, player => player != null);
+
+			foreach (var player in players)
+			{
+				if (playerSelector != null && !playerSelector(player))
+					continue;
+
+				MyAPIGateway.Multiplayer.SendMessageTo(MessageIds.MessageFromServer, bytes, player.SteamUserId);
+			}
+		}
+
 		public static void ShowMessageFromServer(string text, Predicate<IMyPlayer> playerSelector = null)
 		{
 			Logger.WriteLine("{0}: {1}", ServerNameInChat, text);
@@ -36,18 +50,7 @@ namespace ServerCleaner
 			}
 			else  if (MyAPIGateway.Multiplayer.IsServer)
 			{
-				var bytes = Encoding.Unicode.GetBytes(text);
-
-				var players = new List<IMyPlayer>();
-				MyAPIGateway.Players.GetPlayers(players, p => p != null);
-
-				foreach (var player in players)
-				{
-					if (playerSelector != null && !playerSelector(player))
-						continue;
-
-					MyAPIGateway.Multiplayer.SendMessageTo(MessageIds.MessageFromServer, bytes, player.SteamUserId);
-				}
+				SendMessageToPlayers(MessageIds.MessageFromServer, Encoding.Unicode.GetBytes(text), playerSelector);
 			}
 		}
 
@@ -56,9 +59,9 @@ namespace ServerCleaner
 			ShowMessageFromServer(string.Format(format, args));
 		}
 
-		public static void ShowMessageFromServerToAdmin(string format, params object[] args)
+		public static void ShowMessageFromServerToAdmins(string format, params object[] args)
 		{
-			ShowMessageFromServer(string.Format(format, args));
+			ShowMessageFromServer(string.Format(format, args), player => MyAPIGateway.Session.IsUserAdmin(player.SteamUserId));
 		}
 
 		public static void ShowMessageFromServerOnClient(string text)
@@ -67,6 +70,36 @@ namespace ServerCleaner
 				text = text.Substring(0, MaxDisplayedMessageLength - MessageSnip.Length) + MessageSnip;
 
 			MyAPIGateway.Utilities.ShowMessage(ServerNameInChat, text);
+		}
+
+		public static void ShowPopupFromServer(string title, string subtitle, string text, Predicate<IMyPlayer> playerSelector = null)
+		{
+			Logger.WriteLine("\r\n-----\r\n{0}\r\n-----\r\n{1}\r\n-----{2}\r\n-----", title, subtitle, text);
+
+			if (!MyAPIGateway.Multiplayer.MultiplayerActive)
+			{
+				ShowPopupFromServerOnClient(title, subtitle, text);
+			}
+			else if (MyAPIGateway.Multiplayer.IsServer)
+			{
+				var message = string.Format("{0}\0{1}\0{2}", title, subtitle, text);
+				SendMessageToPlayers(MessageIds.PopupFromServer, Encoding.Unicode.GetBytes(message), playerSelector);
+			}
+		}
+
+		public static void ShowPopupFromServerToEveryone(string title, string subtitle, string text)
+		{
+			ShowPopupFromServer(title, subtitle, text);
+		}
+
+		public static void ShowPopupFromServerToAdmins(string title, string subtitle, string text)
+		{
+			ShowPopupFromServer(title, subtitle, text, player => MyAPIGateway.Session.IsUserAdmin(player.SteamUserId));
+		}
+
+		public static void ShowPopupFromServerOnClient(string title, string subtitle, string text)
+		{
+			MyAPIGateway.Utilities.ShowMissionScreen(title, "", subtitle, text, null, "Close");
 		}
 
 		public static bool AnyWithinDistance(Vector3D position, List<Vector3D> otherPositions, double threshold)
