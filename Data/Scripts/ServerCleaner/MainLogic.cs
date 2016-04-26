@@ -152,6 +152,9 @@ namespace ServerCleaner
 				if (config.MessagesFromFile_Enabled)
 					updatables.Add(new MessageFromFileShower(config.MessagesFromFile_Interval));
 
+				if (config.PopupsFromFile_Enabled)
+					updatables.Add(new PopupFromFileShower(config.PopupsFromFile_Interval));
+
 				this.updatables = updatables.ToArray();
 			}
 
