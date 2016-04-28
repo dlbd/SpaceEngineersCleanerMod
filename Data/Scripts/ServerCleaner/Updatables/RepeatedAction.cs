@@ -9,7 +9,7 @@ namespace ServerCleaner.Updatables
 
 		public RepeatedAction(double interval)
 		{
-			timer = TimerFactory.CreateTimer();
+			timer = new Timer();
 			timer.AutoReset = true;
 			timer.Interval = interval;
 			timer.Elapsed += (sender, e) => runOnNextUpdate = ShouldRun();
@@ -23,6 +23,11 @@ namespace ServerCleaner.Updatables
 
 			runOnNextUpdate = false;
 			Run();
+		}
+
+		public void Close()
+		{
+			timer.Close();
 		}
 
 		protected virtual bool ShouldRun()

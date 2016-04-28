@@ -171,7 +171,9 @@ namespace ServerCleaner
 		{
 			if (!unloaded)
 			{
-				TimerFactory.CloseAllTimers();
+				if (updatables != null)
+					foreach (var updatable in updatables)
+						updatable.Close();
 
 				if (registeredMessageHandlers)
 				{

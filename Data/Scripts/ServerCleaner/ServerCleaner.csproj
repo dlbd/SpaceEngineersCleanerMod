@@ -104,7 +104,6 @@
     <Compile Include="Updatables\MessageFromFileShower.cs" />
     <Compile Include="Updatables\RepeatedAction.cs" />
     <Compile Include="Updatables\Deleters\RespawnShipDeleter.cs" />
-    <Compile Include="TimerFactory.cs" />
     <Compile Include="Updatables\Deleters\UnownedGridDeleter.cs" />
     <Compile Include="Updatables\Deleters\DamagedGridDeleter.cs" />
     <Compile Include="Updatables\Deleters\UnrenamedGridDeleter.cs" />
