@@ -74,7 +74,7 @@ namespace ServerCleaner
 
 		public static void ShowPopupFromServer(string title, string subtitle, string text, Predicate<IMyPlayer> playerSelector = null)
 		{
-			Logger.WriteLine("\r\n-----\r\n{0}\r\n-----\r\n{1}\r\n-----{2}\r\n-----", title, subtitle, text);
+			Logger.WriteLine("\r\n-----\r\n{0}\r\n-----\r\n{1}\r\n-----\r\n{2}\r\n-----", title, subtitle, text);
 
 			if (!MyAPIGateway.Multiplayer.MultiplayerActive)
 			{

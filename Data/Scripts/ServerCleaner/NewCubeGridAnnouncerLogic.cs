@@ -104,19 +104,36 @@ namespace ServerCleaner
 		{
 			try
 			{
+				// Is there an easier way to detect non-human players?
+
 				var owners = cubeGrid.SmallOwners;
 
 				var identities = new List<IMyIdentity>();
 				MyAPIGateway.Players.GetAllIdentites(identities, identity => identity != null && owners.Contains(identity.PlayerId));
 
-				// Is there an easier way to detect non-human players?
-
 				var notHuman = identities.Count > 0 && identities
 					.Select(identity => MyAPIGateway.Session.Factions.TryGetPlayerFaction(identity.PlayerId))
 					.All(faction => faction != null && !faction.AcceptHumans);
 
-				var nameString = Utilities.GetOwnerNameString(owners, identities);
-				return string.Format("{0} (owned by {1}{2})", cubeGrid.DisplayName, nameString,
+				var players = new List<IMyPlayer>();
+				MyAPIGateway.Players.GetPlayers(players, player => player != null);
+
+				IMyPlayer nearestPlayer = null;
+				var nearestPlayerDistance = double.NaN;
+				if (players.Count > 0)
+				{
+					var gridPosition = cubeGrid.GetPosition();
+
+					Func<IMyPlayer, double> getDistanceToPlayer = player => (player.GetPosition() - gridPosition).Length();
+					players.Sort((player1, player2) => (int) Math.Round(getDistanceToPlayer(player1) - getDistanceToPlayer(player2)));
+
+					nearestPlayer = players[0];
+					nearestPlayerDistance = getDistanceToPlayer(nearestPlayer);
+				}
+
+				var ownerNameString = Utilities.GetOwnerNameString(owners, identities);
+				return string.Format("{0} (owned by {1}{2}{3})", cubeGrid.DisplayName, ownerNameString,
+					nearestPlayer != null ? string.Format(", {0:0.##} m away from {1}", nearestPlayerDistance, nearestPlayer.DisplayName) : "",
 					notHuman ? " - is that a drone/cargo ship?" : "");
 			}
 			catch (Exception ex)

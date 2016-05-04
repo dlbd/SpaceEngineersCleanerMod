@@ -16,7 +16,6 @@ namespace ServerCleaner
 	{
 		// TODO: something that deletes shot up pirate drones
 		// TODO: start collecting player login times for future inactive player removal
-		// TODO: chat messages and popups from a file
 		// TODO: popups for players with grids in danger of being deleted
 
 		private bool initialized, unloaded, registeredMessageHandlers;
