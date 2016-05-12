@@ -133,7 +133,7 @@ namespace ServerCleaner
 
 				var ownerNameString = Utilities.GetOwnerNameString(owners, identities);
 				return string.Format("{0} (owned by {1}{2}{3})", cubeGrid.DisplayName, ownerNameString,
-					nearestPlayer != null ? string.Format(", {0:0.##} m away from {1}", nearestPlayerDistance, nearestPlayer.DisplayName) : "",
+					nearestPlayer != null ? string.Format(", {0:0.##} m to {1}", nearestPlayerDistance, nearestPlayer.DisplayName) : "",
 					notHuman ? " - is that a drone/cargo ship?" : "");
 			}
 			catch (Exception ex)

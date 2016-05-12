@@ -16,6 +16,9 @@ namespace ServerCleaner
 		public const int MaxDisplayedMessageLength = 400; // the chat window can fit about 200 W characters
 		public const string MessageSnip = " [...]";
 
+		public static readonly Predicate<IMyPlayer> AllPlayerSelector = player => true;
+		public static readonly Predicate<IMyPlayer> AdminPlayerSelector = player => MyAPIGateway.Session.IsUserAdmin(player.SteamUserId);
+
 		public static bool IsGameRunning()
 		{
 			return
@@ -61,7 +64,7 @@ namespace ServerCleaner
 
 		public static void ShowMessageFromServerToAdmins(string format, params object[] args)
 		{
-			ShowMessageFromServer(string.Format(format, args), player => MyAPIGateway.Session.IsUserAdmin(player.SteamUserId));
+			ShowMessageFromServer(string.Format(format, args), AdminPlayerSelector);
 		}
 
 		public static void ShowMessageFromServerOnClient(string text)

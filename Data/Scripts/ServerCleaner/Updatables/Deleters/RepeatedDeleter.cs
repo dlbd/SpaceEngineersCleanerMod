@@ -7,10 +7,12 @@ namespace ServerCleaner.Updatables.Deleters
 		where TDeletionContext : DeletionContext<TEntity>
 	{
 		private TDeletionContext context;
+		private bool messageAdminsOnly;
 
-		public RepeatedDeleter(double interval, TDeletionContext initialDeletionContext) : base(interval)
+		public RepeatedDeleter(double interval, bool messageAdminsOnly, TDeletionContext initialDeletionContext) : base(interval)
 		{
-			context = initialDeletionContext;
+			this.messageAdminsOnly = messageAdminsOnly;
+			this.context = initialDeletionContext;
 		}
 
 		protected override void Run()
@@ -30,7 +32,7 @@ namespace ServerCleaner.Updatables.Deleters
 						continue;
 
 					if (untypedEntity.Physics == null)
-						continue; // // projection/block placement indicator?
+						continue; // projection/block placement indicator?
 
 					if (context.PlayerDistanceThreshold > 0 && Utilities.AnyWithinDistance(untypedEntity.GetPosition(), context.PlayerPositions, context.PlayerDistanceThreshold))
 						continue;
@@ -56,7 +58,7 @@ namespace ServerCleaner.Updatables.Deleters
 			catch (Exception ex)
 			{
 				Logger.WriteLine("Exception in RepeatedDeleter.Run(): {0}", ex);
-				Utilities.ShowMessageFromServer("Oh no, there was an error while I was deleting stuff, let's hope nothing broke: " + ex.Message);
+				ShowMessageFromServer("Oh no, there was an error while I was deleting stuff, let's hope nothing broke: " + ex.Message);
 			}
 		}
 
@@ -67,6 +69,14 @@ namespace ServerCleaner.Updatables.Deleters
 
 		protected virtual void AfterDeletion(TDeletionContext context)
 		{
+		}
+
+		protected void ShowMessageFromServer(string format, params object[] args)
+		{
+			if (messageAdminsOnly)
+				Utilities.ShowMessageFromServerToAdmins(format, args);
+			else
+				Utilities.ShowMessageFromServerToEveryone(format, args);
 		}
 	}
 }

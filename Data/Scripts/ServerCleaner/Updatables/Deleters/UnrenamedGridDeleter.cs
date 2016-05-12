@@ -25,7 +25,8 @@ namespace ServerCleaner.Updatables.Deleters
 		private List<string> vipNames;
 		private bool warnOnly;
 
-		public UnrenamedGridDeleter(double interval, double playerDistanceThresholdForWarning, double playerDistanceThresholdForDeletion, bool warnOnly, List<string> vipNames) : base(interval, new ComplexCubeGridDeletionContext()
+		public UnrenamedGridDeleter(double interval, double playerDistanceThresholdForWarning, double playerDistanceThresholdForDeletion, bool warnOnly, bool messageAdminsOnly, List<string> vipNames)
+			: base(interval, messageAdminsOnly, new ComplexCubeGridDeletionContext()
 		{
 			PlayerDistanceThreshold = playerDistanceThresholdForWarning,
 			PlayerDistanceThresholdForActualDeletion = playerDistanceThresholdForDeletion
@@ -100,13 +101,13 @@ namespace ServerCleaner.Updatables.Deleters
 		{
 			if (context.EntitiesForDeletion.Count > 0)
 			{
-				Utilities.ShowMessageFromServerToEveryone("Deleted {0} unrenamed grid(s) with no antennas or beacons that had no owner online and no players within {1} m: {2}.",
+				ShowMessageFromServer("Deleted {0} unrenamed grid(s) with no antennas or beacons that had no owner online and no players within {1} m: {2}.",
 					context.EntitiesForDeletion.Count, context.PlayerDistanceThresholdForActualDeletion, string.Join(", ", context.NameStringsForDeletion));
 			}
 
 			if (context.NameStringsForLaterDeletion.Count > 0)
 			{
-				Utilities.ShowMessageFromServerToEveryone("I'm going to delete the following unrenamed grid(s) later unless they are renamed or an antenna or a beacon is added: {0}",
+				ShowMessageFromServer("I'm going to delete the following unrenamed grid(s) later unless they are renamed or an antenna or a beacon is added: {0}",
 					string.Join(", ", context.NameStringsForLaterDeletion));
 			}
 		}

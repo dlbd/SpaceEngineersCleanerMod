@@ -11,8 +11,8 @@ namespace ServerCleaner.Updatables.Deleters
 	{
 		private int blockCountThreshold;
 
-		public DamagedGridDeleter(double interval, double playerDistanceThreshold, int blockCountThreshold)
-			: base(interval, new CubeGridDeletionContext() { PlayerDistanceThreshold = playerDistanceThreshold })
+		public DamagedGridDeleter(double interval, double playerDistanceThreshold, int blockCountThreshold, bool messageAdminsOnly)
+			: base(interval, messageAdminsOnly, new CubeGridDeletionContext() { PlayerDistanceThreshold = playerDistanceThreshold })
 		{
 			this.blockCountThreshold = blockCountThreshold;
 		}
@@ -36,7 +36,7 @@ namespace ServerCleaner.Updatables.Deleters
 			if (context.EntitiesForDeletion.Count == 0)
 				return;
 
-			Utilities.ShowMessageFromServerToEveryone("Deleted {0} grid(s) that had fewer than {1} blocks, no players within {2} m, and some of the blocks were damaged: {3}.",
+			ShowMessageFromServer("Deleted {0} grid(s) that had fewer than {1} blocks, no players within {2} m, and some of the blocks were damaged: {3}.",
 				context.EntitiesForDeletion.Count, blockCountThreshold, context.PlayerDistanceThreshold, string.Join(", ", context.EntitiesForDeletionNames));
 		}
 	}

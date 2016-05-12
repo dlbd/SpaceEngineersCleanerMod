@@ -4,8 +4,8 @@ namespace ServerCleaner.Updatables.Deleters
 {
 	public class FloatingObjectDeleter : RepeatedDeleter<IMyFloatingObject, DeletionContext<IMyFloatingObject>>
 	{
-		public FloatingObjectDeleter(double interval, double playerDistanceThreshold)
-			: base(interval, new DeletionContext<IMyFloatingObject>() { PlayerDistanceThreshold = playerDistanceThreshold })
+		public FloatingObjectDeleter(double interval, double playerDistanceThreshold, bool messageAdminsOnly)
+			: base(interval, messageAdminsOnly, new DeletionContext<IMyFloatingObject>() { PlayerDistanceThreshold = playerDistanceThreshold })
 		{
 		}
 
@@ -14,7 +14,7 @@ namespace ServerCleaner.Updatables.Deleters
 			if (context.EntitiesForDeletion.Count == 0)
 				return;
 
-			Utilities.ShowMessageFromServerToEveryone("Deleted {0} floating object(s) with no players within {1} m.", context.EntitiesForDeletion.Count, context.PlayerDistanceThreshold);
+			ShowMessageFromServer("Deleted {0} floating object(s) with no players within {1} m.", context.EntitiesForDeletion.Count, context.PlayerDistanceThreshold);
 		}
 	}
 }

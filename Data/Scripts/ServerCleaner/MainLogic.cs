@@ -120,25 +120,30 @@ namespace ServerCleaner
 				if (config.FloatingObjectDeletion_Enabled)
 					updatables.Add(new FloatingObjectDeleter(
 						config.FloatingObjectDeletion_Interval,
-						config.FloatingObjectDeletion_PlayerDistanceThreshold));
+						config.FloatingObjectDeletion_PlayerDistanceThreshold,
+						config.FloatingObjectDeletion_MessageAdminsOnly));
 
 				if (config.UnownedGridDeletion_Enabled)
 					updatables.Add(new UnownedGridDeleter(
 						config.UnownedGridDeletion_Interval,
 						config.UnownedGridDeletion_PlayerDistanceThreshold,
-						config.UnownedGridDeletion_BlockCountThreshold));
+						config.UnownedGridDeletion_BlockCountThreshold,
+						config.UnownedGridDeletion_MessageAdminsOnly));
 
 				if (config.DamagedGridDeletion_Enabled)
 					updatables.Add(new DamagedGridDeleter(
 						config.DamagedGridDeletion_Interval,
 						config.DamagedGridDeletion_PlayerDistanceThreshold,
-						config.DamagedGridDeletion_BlockCountThreshold));
+						config.DamagedGridDeletion_BlockCountThreshold,
+						config.DamagedGridDeletion_MessageAdminsOnly));
 
 				if (config.RespawnShipDeletion_Enabled)
 					updatables.Add(new RespawnShipDeleter(
 						config.RespawnShipDeletion_Interval,
+						config.RespawnShipDeletion_GridNames,
 						config.RespawnShipDeletion_PlayerDistanceThresholdForWarning,
-						config.RespawnShipDeletion_PlayerDistanceThresholdForDeletion));
+						config.RespawnShipDeletion_PlayerDistanceThresholdForDeletion,
+						config.RespawnShipDeletion_MessageAdminsOnly));
 
 				if (config.UnrenamedGridDeletion_Enabled)
 					updatables.Add(new UnrenamedGridDeleter(
@@ -146,6 +151,7 @@ namespace ServerCleaner
 						config.UnrenamedGridDeletion_PlayerDistanceThresholdForWarning,
 						config.UnrenamedGridDeletion_PlayerDistanceThresholdForDeletion,
 						config.UnrenamedGridDeletion_WarnOnly,
+						config.UnrenamedGridDeletion_MessageAdminsOnly,
 						vipNames));
 
 				if (config.MessagesFromFile_Enabled)

@@ -9,8 +9,8 @@ namespace ServerCleaner.Updatables.Deleters
 	/// </summary>
 	public class UnownedGridDeleter : RepeatedDeleter<IMyCubeGrid, CubeGridDeletionContext>
 	{
-		public UnownedGridDeleter(double interval, double playerDistanceThreshold, int blockCountThreshold)
-			: base(interval, new CubeGridDeletionContext() { PlayerDistanceThreshold = playerDistanceThreshold })
+		public UnownedGridDeleter(double interval, double playerDistanceThreshold, int blockCountThreshold, bool messageAdminsOnly)
+			: base(interval, messageAdminsOnly, new CubeGridDeletionContext() { PlayerDistanceThreshold = playerDistanceThreshold })
 		{
 			BlockCountThreshold = blockCountThreshold;
 		}
@@ -37,7 +37,7 @@ namespace ServerCleaner.Updatables.Deleters
 			if (context.EntitiesForDeletion.Count == 0)
 				return;
 
-			Utilities.ShowMessageFromServerToEveryone("Deleted {0} grid(s) that had fewer than {1} blocks, no owner and no players within {2} m: {3}.",
+			ShowMessageFromServer("Deleted {0} grid(s) that had fewer than {1} blocks, no owner and no players within {2} m: {3}.",
 				context.EntitiesForDeletion.Count, BlockCountThreshold, context.PlayerDistanceThreshold, string.Join(", ", context.EntitiesForDeletionNames));
 		}
 
