@@ -35,7 +35,7 @@ namespace ServerCleaner.Updatables
 			}
 			catch (Exception ex)
 			{
-				Logger.WriteLine("Exception in MessageFromFileShower.ShouldRun(): {0}", ex);
+				Logger.WriteLine("Exception in MessageFromFileShower.ShouldRun: {0}", ex);
 				return false;
 			}
 		}

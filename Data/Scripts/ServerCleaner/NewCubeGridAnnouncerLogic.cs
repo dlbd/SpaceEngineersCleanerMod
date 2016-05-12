@@ -25,36 +25,43 @@ namespace ServerCleaner
 		
 		public override void UpdateAfterSimulation()
 		{
-			base.UpdateAfterSimulation();
-
-			if (unloaded || !Utilities.IsGameRunning())
-				return;
-
-			if (!initialized)
+			try
 			{
-				Initialize();
-				initialized = true;
+				base.UpdateAfterSimulation();
+
+				if (unloaded || !Utilities.IsGameRunning())
+					return;
+
+				if (!initialized)
+				{
+					Initialize();
+					initialized = true;
+				}
+
+				ticks++;
+
+				if (ticks % CheckAndAnnounceEveryTicks == 0)
+				{
+					if (cubeGridsToCheck.Count > 0)
+					{
+						foreach (var cubeGrid in cubeGridsToCheck)
+							cubeGridNamesToAnnounce.Add(GetCubeGridNameToAnnounce(cubeGrid));
+
+						cubeGridsToCheck.Clear();
+					}
+
+					if (cubeGridNamesToAnnounce.Count > 0)
+					{
+						Utilities.ShowMessageFromServerToAdmins("New grid(s) appeared: {0}.", string.Join(", ", cubeGridNamesToAnnounce));
+						cubeGridNamesToAnnounce.Clear();
+					}
+
+					ticks = 0;
+				}
 			}
-
-			ticks++;
-
-			if (ticks % CheckAndAnnounceEveryTicks == 0)
+			catch (Exception ex)
 			{
-				if (cubeGridsToCheck.Count > 0)
-				{
-					foreach (var cubeGrid in cubeGridsToCheck)
-						cubeGridNamesToAnnounce.Add(GetCubeGridNameToAnnounce(cubeGrid));
-
-					cubeGridsToCheck.Clear();
-				}
-
-				if (cubeGridNamesToAnnounce.Count > 0)
-				{
-					Utilities.ShowMessageFromServerToAdmins("New grid(s) appeared: {0}.", string.Join(", ", cubeGridNamesToAnnounce));
-					cubeGridNamesToAnnounce.Clear();
-				}
-
-				ticks = 0;
+				Logger.WriteLine("Exception in NewCubeGridAnnouncerLogic.UpdateAfterSimulation: {0}", ex);
 			}
 		}
 
@@ -69,15 +76,22 @@ namespace ServerCleaner
 
 		protected override void UnloadData()
 		{
-			if (!unloaded)
+			try
 			{
-				if (registeredEntityAddHandler)
-					MyAPIGateway.Entities.OnEntityAdd -= Entities_OnEntityAdd;
+				if (!unloaded)
+				{
+					if (registeredEntityAddHandler)
+						MyAPIGateway.Entities.OnEntityAdd -= Entities_OnEntityAdd;
 
-				unloaded = true;
+					unloaded = true;
+				}
+
+				base.UnloadData();
 			}
-
-			base.UnloadData();
+			catch (Exception ex)
+			{
+				Logger.WriteLine("Exception in NewCubeGridAnnouncerLogic.UnloadData: {0}", ex);
+			}
 		}
 
 		private void Entities_OnEntityAdd(IMyEntity entity)
@@ -96,7 +110,7 @@ namespace ServerCleaner
 			}
 			catch (Exception ex)
 			{
-				Logger.WriteLine("Exception in Entities_OnEntityAdd(): {0}", ex);
+				Logger.WriteLine("Exception in Entities_OnEntityAdd: {0}", ex);
 			}
 		}
 

@@ -23,21 +23,28 @@ namespace ServerCleaner
 
 		public override void UpdateAfterSimulation()
 		{
-			base.UpdateAfterSimulation();
-
-			if (unloaded || !Utilities.IsGameRunning())
-				return;
-
-			if (!initialized)
+			try
 			{
-				Initialize();
-				initialized = true;
+				base.UpdateAfterSimulation();
+
+				if (unloaded || !Utilities.IsGameRunning())
+					return;
+
+				if (!initialized)
+				{
+					Initialize();
+					initialized = true;
+				}
+
+				if (updatables != null)
+				{
+					for (var actionIndex = 0; actionIndex < updatables.Length; actionIndex++)
+						updatables[actionIndex].UpdateAfterSimulation();
+				}
 			}
-
-			if (updatables != null)
+			catch (Exception ex)
 			{
-				for (var actionIndex = 0; actionIndex < updatables.Length; actionIndex++)
-					updatables[actionIndex].UpdateAfterSimulation();
+				Logger.WriteLine("Exception in MainLogic.UpdateAfterSimulation: {0}", ex);
 			}
 		}
 
@@ -198,18 +205,44 @@ namespace ServerCleaner
 
 		private void ShowMessageFromServer(byte[] encodedMessage)
 		{
-			Utilities.ShowMessageFromServerOnClient(Encoding.Unicode.GetString(encodedMessage));
+			try
+			{
+				if (encodedMessage == null)
+				{
+					Logger.WriteLine("ShowMessageFromServer: null byte array");
+					return;
+				}
+
+				Utilities.ShowMessageFromServerOnClient(Encoding.Unicode.GetString(encodedMessage));
+			}
+			catch (Exception ex)
+			{
+				Logger.WriteLine("Exception in ShowMessageFromServer: {0}", ex);
+			}
 		}
 
 		private void ShowPopupFromServer(byte[] encodedMessage)
 		{
-			var message = Encoding.Unicode.GetString(encodedMessage);
-			var splitMessage = message.Split('\0');
+			try
+			{
+				if (encodedMessage == null)
+				{
+					Logger.WriteLine("ShowPopupFromServer: null byte array");
+					return;
+				}
 
-			if (splitMessage.Length != 3)
-				Logger.WriteLine("Invalid popup message");
-			else
-				Utilities.ShowPopupFromServerOnClient(splitMessage[0], splitMessage[1], splitMessage[2]);
+				var message = Encoding.Unicode.GetString(encodedMessage);
+				var splitMessage = message.Split('\0');
+
+				if (splitMessage.Length != 3)
+					Logger.WriteLine("ShowPopupFromServer: invalid popup message");
+				else
+					Utilities.ShowPopupFromServerOnClient(splitMessage[0], splitMessage[1], splitMessage[2]);
+			}
+			catch (Exception ex)
+			{
+				Logger.WriteLine("Exception in ShowPopupFromServer: {0}", ex);
+			}
 		}
 	}
 }

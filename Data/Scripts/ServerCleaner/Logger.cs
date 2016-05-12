@@ -49,13 +49,27 @@ namespace ServerCleaner
 			if (!Initialized)
 				return;
 
-			writer.WriteLine("[{0}] {1}", DateTime.Now.ToString(DateTimeFormat), line);
-			writer.Flush();
+			try
+			{
+				writer.WriteLine("[{0}] {1}", DateTime.Now.ToString(DateTimeFormat), line);
+				writer.Flush();
+			}
+			catch
+			{
+				// There's nowhere to output...
+			}
 		}
 
 		public static void WriteLine(string format, params object[] args)
 		{
-			WriteLine(string.Format(format, args));
+			try
+			{
+				WriteLine(string.Format(format, args));
+			}
+			catch (FormatException)
+			{
+				WriteLine("Logger: invalid message format");
+			}
 		}
 
 		public static bool Initialized { get; private set; }
