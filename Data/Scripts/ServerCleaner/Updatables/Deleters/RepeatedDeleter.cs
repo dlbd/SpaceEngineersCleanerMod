@@ -43,14 +43,19 @@ namespace ServerCleaner.Updatables.Deleters
 					context.EntitiesForDeletion.Add(untypedEntity);
 				}
 
-				foreach (var entity in context.EntitiesForDeletion)
+				if (context.EntitiesForDeletion.Count > 0)
 				{
-					if (entity.SyncObject == null)
-						entity.Delete();
-					else
-						entity.SyncObject.SendCloseRequest();
+					Logger.WriteLine("RepeatedDeleter({0}): deleting {1} entities", GetType().Name, context.EntitiesForDeletion.Count);
 
-					context.EntitiesForDeletionNames.Add(entity.DisplayName);
+					foreach (var entity in context.EntitiesForDeletion)
+					{
+						if (entity.SyncObject == null)
+							entity.Delete();
+						else
+							entity.SyncObject.SendCloseRequest();
+
+						context.EntitiesForDeletionNames.Add(entity.DisplayName);
+					}
 				}
 
 				AfterDeletion(context);
