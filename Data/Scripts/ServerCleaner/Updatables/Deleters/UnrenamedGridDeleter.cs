@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-using Sandbox.ModAPI.Ingame;
+using Sandbox.ModAPI;
 using VRage.Game.ModAPI;
 
 namespace ServerCleaner.Updatables.Deleters

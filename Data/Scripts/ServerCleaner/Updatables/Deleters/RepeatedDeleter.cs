@@ -45,7 +45,7 @@ namespace ServerCleaner.Updatables.Deleters
 
 				if (context.EntitiesForDeletion.Count > 0)
 				{
-					Logger.WriteLine("RepeatedDeleter({0}): deleting {1} entities", GetType().Name, context.EntitiesForDeletion.Count);
+					Logger.WriteLine("{0}: deleting {1} entities", GetType().Name, context.EntitiesForDeletion.Count); // TODO: log more details
 
 					foreach (var entity in context.EntitiesForDeletion)
 					{

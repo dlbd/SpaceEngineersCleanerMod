@@ -99,7 +99,7 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="Updatables\IUpdatableAfterSimulation.cs" />
     <Compile Include="NewCubeGridAnnouncerLogic.cs" />
-    <Compile Include="FloatingObjectDeleter.cs" />
+    <Compile Include="Updatables\Deleters\FloatingObjectDeleter.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MessageIds.cs" />
     <Compile Include="MainLogic.cs" />

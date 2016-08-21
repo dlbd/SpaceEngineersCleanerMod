@@ -152,7 +152,7 @@ namespace ServerCleaner
 			}
 			catch (Exception ex)
 			{
-				Logger.WriteLine("Exception in GetCubeGridNameToAnnounce", ex);
+				Logger.WriteLine("Exception in GetCubeGridNameToAnnounce: {0}", ex);
 				return "a thing full of errors :/";
 			}
 		}
