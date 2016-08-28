@@ -43,15 +43,10 @@ namespace ServerCleaner.Updatables.Deleters
 			if (!IsNameDefault(entity.DisplayName))
 				return false;
 
-			// Is the grid possibly connected to others?
+			// Is there a beacon or an antenna? Merge blocks reset ship names, renaming can get quite tedious
 
 			context.CurrentEntitySlimBlocks.Clear();
-			entity.GetBlocks(context.CurrentEntitySlimBlocks);
-
-			if (context.CurrentEntitySlimBlocks.Any(slimBlock => Utilities.IsConnectableToOtherGrids(slimBlock)))
-				return false;
-
-			// Is there a beacon or an antenna? Merge blocks reset ship names, renaming can get quite tedious
+			entity.GetBlocksIncludingFromStaticallyAttachedCubeGrids(context.CurrentEntitySlimBlocks);
 
 			if (context.CurrentEntitySlimBlocks.Any(slimBlock => slimBlock.FatBlock != null && (slimBlock.FatBlock is IMyRadioAntenna || slimBlock.FatBlock is IMyBeacon)))
 				return false;

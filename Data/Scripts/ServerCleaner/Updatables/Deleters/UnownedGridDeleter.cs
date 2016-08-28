@@ -21,12 +21,9 @@ namespace ServerCleaner.Updatables.Deleters
 				return false;
 
 			context.CurrentEntitySlimBlocks.Clear();
-			entity.GetBlocks(context.CurrentEntitySlimBlocks);
+			entity.GetBlocksIncludingFromStaticallyAttachedCubeGrids(context.CurrentEntitySlimBlocks);
 
 			if (context.CurrentEntitySlimBlocks.Count > BlockCountThreshold)
-				return false;
-
-			if (context.CurrentEntitySlimBlocks.Any(slimBlock => Utilities.IsConnectableToOtherGrids(slimBlock)))
 				return false;
 
 			return true;

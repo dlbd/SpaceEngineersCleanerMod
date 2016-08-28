@@ -112,6 +112,7 @@
     <Compile Include="Updatables\Deleters\UnownedGridDeleter.cs" />
     <Compile Include="Updatables\Deleters\DamagedGridDeleter.cs" />
     <Compile Include="Updatables\Deleters\UnrenamedGridDeleter.cs" />
+    <Compile Include="Utilities.AttachedCubeGrids.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

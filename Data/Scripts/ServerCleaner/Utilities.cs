@@ -10,7 +10,7 @@ using VRageMath;
 
 namespace ServerCleaner
 {
-	public static class Utilities
+	public static partial class Utilities
 	{
 		public const string ServerNameInChat = "Server";
 		public const int MaxDisplayedMessageLength = 400; // the chat window can fit about 200 W characters
@@ -112,20 +112,6 @@ namespace ServerCleaner
 					return true;
 
 			return false;
-		}
-
-		public static bool IsConnectableToOtherGrids(IMySlimBlock slimBlock)
-		{
-			var fatBlock = slimBlock.FatBlock;
-
-			if (fatBlock == null)
-				return false;
-
-			return
-				fatBlock is IMyMotorBase ||
-				fatBlock is IMyMotorRotor ||
-				fatBlock is IMyPistonBase ||
-				fatBlock is IMyPistonTop;
 		}
 
 		public static string GetOwnerNameString(IMyEntity entity, List<IMyIdentity> playerIdentities)

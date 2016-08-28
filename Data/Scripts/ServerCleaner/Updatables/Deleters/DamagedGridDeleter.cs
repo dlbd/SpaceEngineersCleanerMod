@@ -20,12 +20,9 @@ namespace ServerCleaner.Updatables.Deleters
 		protected override bool BeforeDelete(IMyCubeGrid entity, CubeGridDeletionContext context)
 		{
 			context.CurrentEntitySlimBlocks.Clear();
-			entity.GetBlocks(context.CurrentEntitySlimBlocks);
+			entity.GetBlocksIncludingFromStaticallyAttachedCubeGrids(context.CurrentEntitySlimBlocks);
 
 			if (context.CurrentEntitySlimBlocks.Count > blockCountThreshold)
-				return false;
-
-			if (context.CurrentEntitySlimBlocks.Any(slimBlock => Utilities.IsConnectableToOtherGrids(slimBlock)))
 				return false;
 
 			return context.CurrentEntitySlimBlocks.Any(slimBlock => slimBlock.CurrentDamage > 0);

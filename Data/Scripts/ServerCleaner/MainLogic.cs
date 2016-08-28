@@ -18,7 +18,7 @@ namespace ServerCleaner
 		// TODO: start collecting player login times for future inactive player removal
 		// TODO: popups for players with grids in danger of being deleted
 
-		private bool initialized, unloaded, registeredMessageHandlers;
+		private bool initialized, triedToInitialize, unloaded, registeredMessageHandlers;
 		private IUpdatableAfterSimulation[] updatables;
 
 		public override void UpdateAfterSimulation()
@@ -30,11 +30,15 @@ namespace ServerCleaner
 				if (unloaded || !Utilities.IsGameRunning())
 					return;
 
-				if (!initialized)
+				if (!initialized && !triedToInitialize)
 				{
+					triedToInitialize = true;
 					Initialize();
 					initialized = true;
 				}
+
+				if (!initialized && triedToInitialize)
+					return;
 
 				if (updatables != null)
 				{
