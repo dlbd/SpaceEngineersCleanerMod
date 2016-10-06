@@ -51,6 +51,11 @@ namespace ServerCleaner.Updatables.Deleters
 			if (context.CurrentEntitySlimBlocks.Any(slimBlock => slimBlock.FatBlock != null && (slimBlock.FatBlock is IMyRadioAntenna || slimBlock.FatBlock is IMyBeacon)))
 				return false;
 
+			// Wheel stator=null workaround
+
+			if (context.CurrentEntitySlimBlocks.IsAttachedWheelGrid())
+				return false;
+
 			// Are any of the owners online or VIP?
 
 			var nameString = string.Format("{0} (owned by {1})", entity.DisplayName, Utilities.GetOwnerNameString(entity, context.PlayerIdentities));

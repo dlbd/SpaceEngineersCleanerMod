@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Sandbox.ModAPI;
 using VRage.Game.ModAPI;
@@ -8,6 +9,25 @@ namespace ServerCleaner
 {
 	public partial class Utilities
 	{
+		// Workaround for bug in 01_149_005: IMyWheel.Stator is always null, even when .IsAttached = true
+		public static bool IsAttachedWheelGrid(this List<IMySlimBlock> slimBlocks)
+		{
+			var gridHasStators = slimBlocks.Any(slimBlock => slimBlock.FatBlock != null && slimBlock.FatBlock is IMyMotorStator);
+
+			if (gridHasStators)
+				return false;
+
+			return slimBlocks.Any(slimBlock =>
+			{
+				if (slimBlock.FatBlock == null)
+					return false;
+
+				var wheel = slimBlock.FatBlock as IMyWheel;
+
+				return wheel != null && wheel.IsAttached;
+			});
+		}
+
 		public static List<IMyCubeGrid> GetAttachedCubeGrids(IMyCubeGrid cubeGrid)
 		{
 			var attachedCubeGrids = new List<IMyCubeGrid>();
@@ -36,6 +56,7 @@ namespace ServerCleaner
 
 					{
 						var motorRotor = fatBlock as IMyMotorRotor;
+
 						if (motorRotor != null && motorRotor.Stator != null && TryAddDistinctCubeGrid(motorRotor.Stator.CubeGrid, attachedCubeGrids))
 							cubeGridsToVisit.Enqueue(motorRotor.Stator.CubeGrid);
 					}

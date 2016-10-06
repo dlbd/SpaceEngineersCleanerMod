@@ -25,6 +25,9 @@ namespace ServerCleaner.Updatables.Deleters
 			if (context.CurrentEntitySlimBlocks.Count > blockCountThreshold)
 				return false;
 
+			if (context.CurrentEntitySlimBlocks.IsAttachedWheelGrid())
+				return false;
+
 			return context.CurrentEntitySlimBlocks.Any(slimBlock => slimBlock.CurrentDamage > 0);
 		}
 
