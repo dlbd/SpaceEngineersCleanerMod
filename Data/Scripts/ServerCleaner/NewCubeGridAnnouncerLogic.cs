@@ -123,10 +123,10 @@ namespace ServerCleaner
 				var owners = cubeGrid.SmallOwners;
 
 				var identities = new List<IMyIdentity>();
-				MyAPIGateway.Players.GetAllIdentites(identities, identity => identity != null && owners.Contains(identity.PlayerId));
+				MyAPIGateway.Players.GetAllIdentites(identities, identity => identity != null && owners.Contains(identity.IdentityId));
 
 				var notHuman = identities.Count > 0 && identities
-					.Select(identity => MyAPIGateway.Session.Factions.TryGetPlayerFaction(identity.PlayerId))
+					.Select(identity => MyAPIGateway.Session.Factions.TryGetPlayerFaction(identity.IdentityId))
 					.All(faction => faction != null && !faction.AcceptHumans);
 
 				var players = new List<IMyPlayer>();

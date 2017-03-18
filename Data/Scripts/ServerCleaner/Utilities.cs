@@ -10,14 +10,16 @@ using VRageMath;
 
 namespace ServerCleaner
 {
+	public delegate bool PlayerSelector(IMyPlayer player);
+
 	public static partial class Utilities
 	{
 		public const string ServerNameInChat = "Server";
 		public const int MaxDisplayedMessageLength = 400; // the chat window can fit about 200 W characters
 		public const string MessageSnip = " [...]";
 
-		public static readonly Predicate<IMyPlayer> AllPlayerSelector = player => true;
-		public static readonly Predicate<IMyPlayer> AdminPlayerSelector = player => MyAPIGateway.Session.IsUserAdmin(player.SteamUserId);
+		public static readonly PlayerSelector AllPlayerSelector = player => true;
+		public static readonly PlayerSelector AdminPlayerSelector = player => MyAPIGateway.Session.IsUserAdmin(player.SteamUserId);
 
 		public static bool IsGameRunning()
 		{
@@ -29,7 +31,7 @@ namespace ServerCleaner
 				MyAPIGateway.Utilities != null;
 		}
 
-		private static void SendMessageToPlayers(ushort id, byte[] bytes, Predicate<IMyPlayer> playerSelector = null)
+		private static void SendMessageToPlayers(ushort id, byte[] bytes, PlayerSelector playerSelector = null)
 		{
 			var players = new List<IMyPlayer>();
 			MyAPIGateway.Players.GetPlayers(players, player => player != null);
@@ -39,11 +41,11 @@ namespace ServerCleaner
 				if (playerSelector != null && !playerSelector(player))
 					continue;
 
-				MyAPIGateway.Multiplayer.SendMessageTo(MessageIds.MessageFromServer, bytes, player.SteamUserId);
+				MyAPIGateway.Multiplayer.SendMessageTo(id, bytes, player.SteamUserId);
 			}
 		}
 
-		public static void ShowMessageFromServer(string text, Predicate<IMyPlayer> playerSelector = null)
+		public static void ShowMessageFromServer(string text, PlayerSelector playerSelector = null)
 		{
 			Logger.WriteLine("{0}: {1}", ServerNameInChat, text);
 
@@ -75,7 +77,7 @@ namespace ServerCleaner
 			MyAPIGateway.Utilities.ShowMessage(ServerNameInChat, text);
 		}
 
-		public static void ShowPopupFromServer(string title, string subtitle, string text, Predicate<IMyPlayer> playerSelector = null)
+		public static void ShowPopupFromServer(string title, string subtitle, string text, PlayerSelector playerSelector = null)
 		{
 			Logger.WriteLine("\r\n-----\r\n{0}\r\n-----\r\n{1}\r\n-----\r\n{2}\r\n-----", title, subtitle, text);
 
@@ -126,7 +128,7 @@ namespace ServerCleaner
 				return "noone";
 
 			var names = playerIdentities
-				.Where(identity => ownerIds.Contains(identity.PlayerId))
+				.Where(identity => ownerIds.Contains(identity.IdentityId))
 				.Select(identity => identity.DisplayName)
 				.ToList();
 

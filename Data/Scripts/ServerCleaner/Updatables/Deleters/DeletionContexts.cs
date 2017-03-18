@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
-
 using Sandbox.ModAPI;
-using VRageMath;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
+using VRageMath;
 
-namespace ServerCleaner
+namespace ServerCleaner.Updatables.Deleters
 {
+	// These classes were orginally created to prevent extra object allocations,
+	// but the code might be cleaner without them. Alternatively, they could
+	// be expanded to include some kind of caching...
+
 	public class DeletionContext<TEntity>
 	{
 		public double PlayerDistanceThreshold;
@@ -64,7 +67,7 @@ namespace ServerCleaner
 				if (player.Client == null)
 					continue;
 
-				OnlinePlayerIds.Add(player.PlayerID);
+				OnlinePlayerIds.Add(player.IdentityId);
 			}
 
 			NameStringsForDeletion.Clear();

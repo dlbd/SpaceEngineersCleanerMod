@@ -9,7 +9,7 @@ namespace ServerCleaner.Updatables.Deleters
 	/// </summary>
 	public class DamagedGridDeleter : RepeatedDeleter<IMyCubeGrid, CubeGridDeletionContext>
 	{
-		private int blockCountThreshold;
+		private readonly int blockCountThreshold;
 
 		public DamagedGridDeleter(double interval, double playerDistanceThreshold, int blockCountThreshold, bool messageAdminsOnly)
 			: base(interval, messageAdminsOnly, new CubeGridDeletionContext() { PlayerDistanceThreshold = playerDistanceThreshold })

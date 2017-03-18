@@ -62,7 +62,7 @@ namespace ServerCleaner.Updatables.Deleters
 
 			foreach (var ownerID in entity.SmallOwners)
 			{
-				if (context.PlayerIdentities.Any(identity => identity.PlayerId == ownerID && vipNames.Contains(identity.DisplayName)))
+				if (context.PlayerIdentities.Any(identity => identity.IdentityId == ownerID && vipNames.Contains(identity.DisplayName)))
 					return false;
 
 				if (!context.OnlinePlayerIds.Contains(ownerID))
